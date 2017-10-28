@@ -1,0 +1,75 @@
+\documentclass[]{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage[lowtilde]{url}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black,
+	filecolor=magenta,      
+	urlcolor=blue,
+	citecolor=black
+}
+\usepackage{indentfirst}	% auto-indent
+
+%opening
+\title{\textbf{Honours Thesis II \\ Progress Report 1}}
+\author{Sean Stappas \\ 260639512}
+\date{September 20, 2017}
+
+\begin{document}
+	\maketitle
+	
+	\section{Project Title \& Description}
+	
+	The project is \emph{Prometheus AI: Phase 2}. The Prometheus AI is a software model of the human brain with the goal of controlling and coordinating multiple robots in different environments. As an Honours Thesis, this project is to be done alone. As such, all sections on group work (list of group members and group work report) have been omitted.
+	
+	\section{Project Supervisor}
+	
+	The project supervisor and advisor is Joseph Vybihal, professor in computer science at McGill University. Contact information can be found on his website: \url{http://www.cs.mcgill.ca/~jvybihal/}
+	
+	\section{Meetings}
+	
+	A meeting occurred on September 13 with the two students who worked in Prof. Vybihal's lab over the summer. These two students are Isaac Sultan and Si Yi Li. Isaac worked on the Expert System (ES) layer and Si Yi worked on the Knowledge Node Network (KNN) layer. Both the ES and KNN were initially created by me, and I closely followed their progress over the summer. The extent of their changes will be described in \autoref{readings} and \autoref{progress}.
+	
+	It is now planned to meet with Prof. Vybihal every Friday starting on September 29 to discuss the project. In the mean time, updates and communication with Prof. Vybihal were done using the lab's Slack channel.
+	
+	\section{Project Readings} \label{readings}
+	
+	The main relevant readings recently were the reports produced by Isaac and Si Yi, summarizing their work over the summer. Si Yi worked on the Knowledge Node Network (KNN) layer of Prometheus. The KNN is a representation of memory which manipulates Knowledge Nodes and tries to emulate the behaviour of the human brain. Here are the main areas that Si Yi worked on in the KNN \cite{siyi}:
+	
+	\begin{description}
+		\item[Backward searching:] going "backwards" through the graph of Knowledge Nodes to discover new active tags.
+		\item[Lambda searching:] doing a combination of forward and backward searching through the graph of Knowledge Nodes.
+		\item[Confidence:] how confident the system is that a node is true, given data from the Neural Network layer.
+	\end{description}
+
+	Isaac worked on the Expert System (ES) layer of Prometheus. The ES is a basic logic reasoner acting on Facts, Rules and Recommendations. Isaac mostly worked on the following in the ES \cite{isaac}:
+	
+	\begin{description}
+		\item[Predicates and matching in Facts:] having multiple arguments in a Fact, so that one Fact can equal or be equivalent to another.
+		\item[Rule creation:] creating Rules after completing a search in the Knowledge Node graph.
+	\end{description}
+	
+
+	Also, Prof. Vybihal made some changes to his documents describing the various layers of Prometheus over the summer. These documents therefore needed to be re-read and discussed to understand the next steps. Notably, there were many additions to Prof. Vybihal's Knowledge Nodes document \cite{vybihal-knowledge}, such as more detailed descriptions of backwards and lambda searching.
+	
+	Finally, I have come across some AI readings that could be relevant to the Prometheus project. The most interesting reading is from Russell and Norvig's AI textbook, which addresses representing knowledge in an uncertain domain \cite{russell2016artificial}.
+	
+	\section{Recent Progress} \label{progress}
+	
+	Most of the recent work has been understanding and examining the code changes made by Isaac and Si Yi, and subsequently providing useful feedback on what was done correctly and what needs improvement. One big issue that both Isaac and Si Yi's changes had was the lack of testing. The initial code I set up was heavily tested with integration tests and, to keep this standard, I made sure they added thorough integration tests.
+	
+	Another big problem with both their code additions was very long methods with little documentation. I suggested that they split up the methods into smaller ones and write extensive Javadoc. Besides that, there were many small bugs and style problems that I helped fix with them. There are still some areas of the code that I have not finished reviewing, and this is what I will have to complete next.
+	
+	\section{Future Plans}
+	
+	The future plans are to finish cleaning up the code changes made by Isaac and Si Yi until it meets the standard I initially set. Then, I would like to implement various design patterns and best practices I have learned over the summer at my internship. These include writing testable code with Google Guice, and writing unit tests to test that code base with Mockito and JUnit or TestNG. This allows for robust, segregated and clear code that can easily be expanded by future developers.
+	
+	Once that standard is met, the next steps are either to continue adding incremental feature improvements to the KNN and ES, as described in various documents written by Prof. Vybihal, or to look into consolidating the work done on other layers of Prometheus (Neural Network, Meta Reasoner) with my own. The exact direction to take will have to be discussed with Prof. Vybihal and the rest of the team during the lab meetings to come.
+	
+	%\renewcommand\refname{}
+	\bibliographystyle{unsrt}
+	\bibliography{readings}{}
+	
+\end{document}
