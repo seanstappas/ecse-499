@@ -46,12 +46,12 @@
   framexleftmargin=2em
 }
 % PC
-%\def \espath {"C:/Users/Sean/IdeaProjects/Prometheus/src/es/ExpertSystem.java"}
-%\def \knnpath {"C:/Users/Sean/IdeaProjects/Prometheus/src/knn/KnowledgeNodeNetwork.java"}
+\def \espath {"C:/Users/Sean/IdeaProjects/Prometheus/src/es/ExpertSystem.java"}
+\def \knnpath {"C:/Users/Sean/IdeaProjects/Prometheus/src/knn/KnowledgeNodeNetwork.java"}
 
 % OSX
-\def \espath {"/Users/seanstappas1/GitHub/prometheus-ai/src/main/java/es/api/ExpertSystem.java"}
-\def \knnpath {"/Users/seanstappas1/GitHub/prometheus-ai/src/main/java/knn/api/KnowledgeNodeNetwork.java"}
+%\def \espath {"/Users/seanstappas1/GitHub/prometheus-ai/src/main/java/es/api/ExpertSystem.java"}
+%\def \knnpath {"/Users/seanstappas1/GitHub/prometheus-ai/src/main/java/knn/api/KnowledgeNodeNetwork.java"}
 
 \def\equationautorefname~#1\null{%
   Equation~(#1)\null
@@ -85,7 +85,7 @@
 	Sean Stappas \\ 
 	260639512 \\
 	\\ 
-	ECSE-498: Honours Thesis I \\
+	ECSE-499: Honours Thesis II \\
 	\\
 	\small Supervised by: Prof. Joseph Vybihal
 }
@@ -354,54 +354,11 @@ The most important method in the \code{KnowledgeNodeNetwork} is \code{think()}, 
 
 Without a parameter, the \code{think()} method runs to natural quiescence. There is also an overloaded version of \code{think()} that takes an \code{int} \code{numberOfCycles} as a parameter. This parameter represents the thinking effort described earlier. Similarly, \code{thinkForwards()}, \code{thinkBackwards()}, and \code{thinkLambda()} all have overloaded versions with \code{numberOfCycles} as a parameter. This is a good example of the polymorphism principle of OOP.
 
-\lstinputlisting[
-firstline=163,
-lastline=171,
-caption=Method to think forwards until natural quiescence in the KNN.,
-label=lst:thinkForwards
-]{
-	\knnpath
-}
-
-\lstinputlisting[
-firstline=179,
-lastline=189,
-caption=Method to think forwards for a fixed number of cycles in the KNN.,
-label=lst:thinkForwardsThreshold
-]{
-	\knnpath
-}
 
 Currently, only the \code{thinkForwards()} method is fully completed. The version that runs until natural quiescence can be seen in \autoref{lst:thinkForwards}. The version with a fixed number of thinking cycles can be seen in \autoref{lst:thinkForwardsThreshold}. One can see that both \code{thinkForwards()} methods call \code{forwardThinkCycle()}, which can be seen in \autoref{lst:forwardThinkCycle}. This is where \code{Tags} can become active (line 9), being added into \code{activeTags}.
 
 One can see that the \code{forwardThinkCycle()} method calls \code{excite()} (line 5) on a \code{KnowledgeNode}, which returns the \code{Tags} activated as a result of excitation. The method can be seen in \autoref{lst:excite}. This, in turn, may call \code{fire()} on line 5 to fire the \code{KnowledgeNode}, activate its output tags, and return the \code{Tags} activated as a result of firing. The method can be seen in \autoref{lst:fire}. All these methods were made \code{private}, since they should never be accessed outside the KNN. This is a good example of the encapsulation principle of OOP.
 
-\lstinputlisting[
-firstline=196,
-lastline=206,
-caption=Method to think forwards for a single cycle in the KNN.,
-label=lst:forwardThinkCycle
-]{
-\knnpath
-}
-
-\lstinputlisting[
-firstline=214,
-lastline=221,
-caption=Method to excite a KN.,
-label=lst:excite
-]{
-	\knnpath
-}
-
-\lstinputlisting[
-firstline=229,
-lastline=237,
-caption={Method to fire a KN.},
-label=lst:fire
-]{
-\knnpath
-}
 
 A simple version of \code{thinkBackwards()} was also completed, activating a KN only if all its output \code{Tags} are active.
 
@@ -420,43 +377,8 @@ The ES layer is based around the \code{ExpertSystem} Java class. This class has 
 
 The most important method in the \code{ExpertSystem} is \code{think()}, which implements the functionality described in \ar{sec:background}. Without a parameter, the \code{think()} method runs to natural quiescence. This can be seen in \autoref{lst:think}.
 
-\lstinputlisting[
-firstline=153,
-lastline=166,
-caption=Method to think until natural quiescence in the ES.,
-label=lst:think
-]{
-	\espath
-}
-
-\lstinputlisting[
-firstline=178,
-lastline=192,
-caption=Method to think for a fixed number of cycles in the ES.,
-label=lst:thinkThreshold
-]{
-\espath
-}
-
 There is also an overloaded version of \code{think()} that functions similarly to that of the \code{KnowledgeNodeNetwork}. This can be seen in \autoref{lst:thinkThreshold}. Both variants of \code{think()} return the \code{Set} of \code{Recommendations} that become active as a result of thinking, which is passed on to the META. Both versions also call a method named \code{thinkCycle()} which represents a single cycle of thinking. The code for this method can be seen in \autoref{lst:thinkCycle}.
 
-\lstinputlisting[
-firstline=202,
-lastline=227,
-caption=Method to think for a single cycle in the ES.,
-label=lst:thinkCycle
-]{
-\espath
-}
-
-\lstinputlisting[
-firstline=55,
-lastline=65,
-caption=Method to add a Tag to the ES.,
-label=lst:addTag
-]{
-\espath
-}
 
 Finally, we see in the \code{thinkCycle()} method a call to the \code{addTag()} method on line 21, which adds a \code{Tag} to the ES depending on its type. The code can be seen in \autoref{lst:addTag}. The method is \code{public} because it could be used by a user of the ES to set the initial data structures. It returns \code{true} if the \code{Tag} is added successfully. The \code{addRule()}, \code{addFact()}, and \code{addRecommendation()} methods simply add a \code{Tag} to the \code{readyRules}, \code{facts}, or \code{recommendations} \code{Sets}, respectively, and return \code{true} if the ES did not already contain the \code{Tag} to be added.
 

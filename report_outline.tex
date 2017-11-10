@@ -1,0 +1,158 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{fullpage}
+\usepackage{indentfirst}
+\usepackage[per-mode=symbol]{siunitx}
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage[hidelinks]{hyperref}
+\usepackage[format=plain,font=it]{caption}
+\usepackage{subcaption}
+\usepackage{standalone}
+\usepackage[nottoc]{tocbibind}
+\usepackage{scrextend}
+\usepackage[margin=1in]{geometry}
+\usepackage{lstautodedent}
+\usepackage[super]{nth}
+\usepackage{todonotes}
+\usepackage{titling}
+
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+  basicstyle=\scriptsize\tt,
+  autodedent,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  xleftmargin=2.5em,
+  frame=single,
+  framexleftmargin=2em
+}
+% PC
+%\def \espath {"C:/Users/Sean/IdeaProjects/Prometheus/src/es/ExpertSystem.java"}
+%\def \knnpath {"C:/Users/Sean/IdeaProjects/Prometheus/src/knn/KnowledgeNodeNetwork.java"}
+
+% OSX
+\def \espath {"/Users/seanstappas1/GitHub/prometheus-ai/src/main/java/es/api/ExpertSystem.java"}
+\def \knnpath {"/Users/seanstappas1/GitHub/prometheus-ai/src/main/java/knn/api/KnowledgeNodeNetwork.java"}
+
+\def\equationautorefname~#1\null{%
+  Equation~(#1)\null
+}
+
+\def\sectionautorefname~#1\null{%
+  Section~#1\null
+}
+
+\def\subsectionautorefname~#1\null{%
+  Subsection~#1\null
+}
+
+\def\arraystretch{1.3}%  1 is the default, change whatever you need
+
+% Custom commands
+\newcommand{\ar}[1]{\autoref{#1}}
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\specialcell}[2][c]{%
+	\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+\setlength{\droptitle}{-7em}
+\title
+{
+	\Large\textbf{Prometheus Final Report Outline} \\ 
+	\large ECSE 499: Honours Thesis II
+}
+\author % (optional, for multiple authors)
+{
+	Sean Stappas \\
+	\small Supervised by: Prof. Joseph Vybihal
+}
+\date{November \nth{10}, 2017}
+
+\begin{document}
+	
+\sloppy
+
+\twocolumn
+\maketitle
+
+\section*{Abstract}
+\begin{itemize}
+	\item Summarize the entire thesis.
+\end{itemize}
+
+\section*{Acknowledgments}
+\begin{itemize}
+	\item Mention the contributions of other undergraduate students to the project.
+\end{itemize}
+
+\section{Introduction}
+\begin{itemize}
+	\item Introduce the sections to be covered.
+\end{itemize}
+
+\section{Background}
+\begin{itemize}
+	\item Describe the Prometheus AI layers, with an emphasis on the KNN and ES.
+	\item Address the comments provided on last semester's report.
+	\item Expand on some of the new theory provided in the Knowledge Nodes doc.
+\end{itemize}
+
+\section{Problem}
+\begin{itemize}
+	\item Describe the project requirements (creating and supervising the creation of Prometheus, with an emphasis on the KNN and ES).
+\end{itemize}
+
+\section{Design}
+\begin{itemize}
+	\item Describe the major design criteria (efficiency, OOP, readability, documentation, testability).
+	\item Expand on the OOP criterion by describing fundamental (SOLID) principles like the Liskov substitution principle, dependency inversion, etc.
+	\item Expand on the testability criterion by showing the necessity of unit testing and behavior-driven development (BDD).
+\end{itemize}
+
+\section{Implementation}
+\begin{itemize}
+	\item Describe how each of the previous design criteria were implemented in Prometheus.
+	\item Describe the overall code structure (packages and Guice modules).
+	\item Explain the use of the major libraries used (Google Guice, Mockito, TestNG and Apache Commons Lang 3).
+\end{itemize}
+
+\section{Results \& Tests}
+\begin{itemize}
+	\item Describe the unit tests.
+	\item Describe the integration tests.
+\end{itemize}
+
+\section{Impact on Society and the Environment}
+\begin{itemize}
+	\item Describe possible impact areas (safety, risk, environmental and societal benefits).
+\end{itemize}
+
+\section{Conclusion}
+\begin{itemize}
+	\item Summarize accomplishments of the thesis.
+	\item Discuss some insights (people/time management and technical debt).
+	\item Discuss possible future extensions to the project.
+\end{itemize}
+
+\end{document}
