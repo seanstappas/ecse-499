@@ -1,0 +1,64 @@
+\documentclass[]{article}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage[lowtilde]{url}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black,
+	filecolor=magenta,      
+	urlcolor=blue,
+	citecolor=black
+}
+\usepackage{indentfirst}	% auto-indent
+\usepackage[super]{nth}
+\usepackage{cleveref}
+
+%opening
+\title{\textbf{Honours Thesis II \\ Progress Report 4}}
+\author{Sean Stappas \\ 260639512}
+\date{November \nth{15}, 2017}
+
+\begin{document}
+	\maketitle
+	
+	\section{Project Title \& Description}
+	
+	The project is \emph{Prometheus AI: Phase 2}. The Prometheus AI is a software model of the human brain with the goal of controlling and coordinating multiple robots in different environments. As an Honours Thesis, this project is to be done alone. As such, all sections on group work (list of group members and group work report) have been omitted.
+	
+	\section{Project Supervisor}
+	
+	The project supervisor and advisor is Joseph Vybihal, professor in computer science at McGill University. Contact information can be found on his website: \url{http://www.cs.mcgill.ca/~jvybihal/}.
+	
+	\section{Meetings}
+	% Provide a list of group meeting with dates and a very brief summary of topic of each meeting. Provide a list of dates when you met with your project supervisor(s).
+	
+	Meetings occurred on November \nth{3} and November \nth{10} with Prof. Vybihal, where progress and plans were discussed. A meeting also occurred on November \nth{2} with Michael Ding, an undergraduate student interested in working on the META layer of Prometheus.
+	
+	\section{Project Readings} \label{sec:readings}
+	% Provide a bibliography of any material you have read since the beginning of the semester and any material you have identified for future reading in relation to your project.
+	
+	The readings for the past three weeks are the same as for the first progress report. Most of the recent work was in reading and writing code, as will be described in the next section.
+	
+	\section{Recent Progress} \label{sec:progress}
+	% Summarize your progress since your last report. Compare this your original plans, and identify difficulties that hindered your progress and the steps you are taking to overcome them. (1/2 page maximum).
+	
+	Work was done on the KNN layer to refactor it. This includes removing unnecessary or redundant code and simplifying overly complex methods.
+	
+	With all the undergraduate students showing interest in the development of Prometheus, many elements were put in place to ensure a quality standard for the code base on the GitHub repository. First, a REAME was created with some background information to get started working on the code. This includes information about all the libraries used (Guice, Mockito, TestNG, etc.) as well as pointers for making changes. Next, a code review system was put in place. If a student wants to work on the code, they must first create their own branch and then submit a pull request once they feel it can be merged back into the main branch. At this point, the code must be reviewed by me before merging. If necessary, changes can be suggested to complete the review. Finally, a continuous testing system was put in place with Travis CI. For each of the aforementioned pull requests, all the unit and integration tests in the code must pass before merging. With all these systems in place, it should be easier to enforce a quality standard.
+	
+	A one-page outline of what is planned to be discussed in the final report was provided to Prof. Vybihal. The aim is to get some feedback on the overall structure before diving into the writing. An rough initial draft of the report and poster were also created.
+	
+	Finally, a draft of the Javadoc associated with the code was updated and can be seen here: \url{http://cs.mcgill.ca/~sstapp/prometheus/index.html}.
+	
+	
+	\section{Future Plans} \label{sec:plans}
+	% Summarize your plans for future work for the period until the next report is due. Provide an expected timeline for your progress (1/2 page maximum).
+		
+	The plans for the next two weeks are to finish refactoring and creating unit tests for the KNN layer. Also, work will start to create a demo of Prometheus to be shown during the poster presentation. This will most likely take the form of some visualization of the ES and/or KNN in the form of a connected graph. It is expected that this will take around a week of work. Work will also be continued on the poster and the final report, with the poster draft due on November \nth{24} and the report draft due on December \nth{1}.
+	
+	%\renewcommand\refname{}
+	%\bibliographystyle{unsrt}
+	%\bibliography{readings}{}
+	
+\end{document}
