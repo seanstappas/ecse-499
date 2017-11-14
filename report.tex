@@ -18,7 +18,7 @@
 \usepackage{lstautodedent}
 \usepackage[super]{nth}
 \usepackage{todonotes}
-
+\usepackage[noabbrev,capitalize,nameinlink]{cleveref}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -138,11 +138,12 @@ The system is loosely inspired from the structure of the human brain, and is com
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/ai_model.pdf}
-	\caption{Prometheus AI model. Blue represents Prometheus and green represents the robots.}
+	\caption[Prometheus AI model.]{Prometheus AI model. Blue represents Prometheus and green represents the robots.}
 	\label{model}
 \end{figure}
 
 The theory needed to understand these four layers will be given in \autoref{sec:background}. The assigned task will then be described in \autoref{sec:problem}. Design criteria will be discussed in \autoref{sec:design}. The description of the work done this semester can be found in \autoref{sec:implementation}, and the results and tests will be discussed in \autoref{sec:results}. Finally, the possible future impact of this project on society and the environment will be explored in \autoref{sec:impact}.
+\todo{Mention scope of thesis (where my part fits in to bigger whole)}
 
 \section{Background}
 \label{sec:background}
@@ -175,7 +176,7 @@ The KNN layer represents memory in the human brain. It takes in the tags provide
 	\label{kn}
 \end{figure}
 
-KNs have an input tag representing some information, and output tags representing information related to the input tag. Tags in the KNN can become ``active'', meaning that they are observed or seen as true. For example, if the NN determines that it observes a ball and passes that information on to the KNN, then a ``ball'' tag may become active in the KNN. This would excite the KN with input tag ``ball''. If that KN fires, other tags related to that observation can become active. For example, tags representing ball characteristics such as ``round object'' may become active. This tag in turn may be connected to another KN, potentially causing more activation.
+KNs have an input tag representing some information, and output tags representing information related to the input tag. When a KN is stimulated it becomes ``excited''. Tags in the KNN can become ``active'', meaning the associated KN is stimulated beyond a threshold. We say that the associated KN ``fires'' in this case. For example, if the NN determines that it observes a ball and passes that information on to the KNN, then a ``ball'' tag may become active in the KNN. This would excite the KN with input tag ``ball''. If that KN fires, other tags related to that observation can become active. For example, tags representing ball characteristics such as ``round object'' may become active. This tag in turn may be connected to another KN, potentially causing more activation.
 
 There are different ways that KN excitation could be implemented. With simple linear activation, excitation would increment the node's activation parameter, which initially starts at 0. If $activation \geq threshold$, the KN fires, causing the activation of the output tags. This description corresponds to forwards thinking. The activation can also be achieved using a sigmoid function, which is more representative of neurons in the brain \cite{neuro}.
 
@@ -184,13 +185,18 @@ There is a strength value associated with every KN which represents how much wei
 
 Strength can be seen as the firing predisposition of neurons in the brain as a result of learning \cite{vybihal-knowledge}. Indeed, learning can increase the synaptic strength between neurons and cause early  firing of those neurons \cite{hebb}. For example, a person who has had a bad experience with spiders would fire their fear response upon seeing a spider more quickly than one without that fear.
 
-Every KN can have a confidence value associated with it, representing how certain the KNN is that the input tag is true. In this case, the confidence value would be stored within the KN itself. These confidence values can come from the NN, since a neural network can have a confidence value when classifying objects. When initiating a think cycle, the confidence values at each stage can be multiplied with each other to produce a new confidence value, making the KNN less certain of a memory as it searches through its tree of KNs. This represents how belief changes when thinking. Indeed, some memories in the brain require a great deal of thinking to reach and, as such, can be less certain than other memories. This can lead to the recollection of false memories \cite{falsememories}.
+Every KN can have a belief value associated with it, representing how certain the KNN is that the input tag is true. In this case, the belief value would be stored within the KN itself. These belief values can come from the NN, since a neural network can associate confidence values with its classifications of objects. When initiating a think cycle, the belief values at each stage can be multiplied with each other to produce a new confidence value, making the KNN less certain of a memory as it searches through its tree of KNs. This represents how belief changes when thinking. Indeed, some memories in the brain require a great deal of thinking to reach and, as such, can be less certain than other memories. This can lead to the recollection of false memories \cite{falsememories}.
+
+Note that the activation of a KN and the belief value associated with it are two different concepts. Indeed, a KN may be fired even if the KNN knows that it is false. This can represent an agent ``lying'' to itself or repeating a thought process it knows to be false. This is known as ``self-deception'' in humans and it has been argued that this can be used for positive mental health \cite{taylor1989positive}.
 
 Age represents how long it has been since a KN has been excited. The idea is that, after a KN has aged a certain amount of time, that node will be discarded, similarly to how old memories are discarded in the brain \cite{aging}. The intuitive implementation of aging is to constantly increment some age value associated with every KN, and discard nodes whose age is greater than some threshold. The age would be reset to 0 when the node is excited. This would however be unnecessarily computationally intensive, requiring some kind of constant updating of every single node. A more efficient way of doing it would be to save a timestamp for every KN when it is excited, and if the KNN attempts to excite a KN whose previous timestamp value is too far into the past, that node is instead deleted.
+\todo{Move some of this to implementation?}
 
-Thinking in the KNN represents an activation routine, which activates tags and potentially fires KNs. The KNN has three main ways of thinking: forwards, backwards, and lambda. The version of thinking to be done by the KNN is chosen by the META.
+Thinking in the KNN represents an activation routine, which activates tags and potentially fires KNs. The KNN has four main ways of thinking: direct, forwards, backwards, and lambda. The version of thinking to be done by the KNN is chosen by the META.
 
-Forwards thinking is the simplest and is depicted in \autoref{think_forwards}. Firing a KN can cause forward activation of more KNs, hence the ``forwards'' naming.
+Direct thinking is a simple lookup of the desired Tag and excitation of the associated KN. This represents the simplest form of thinking in the KNN.
+
+Forwards thinking is depicted in \autoref{think_forwards}. Firing a KN can cause forward activation of more KNs, hence the ``forwards'' naming.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/forwards_thinking.pdf}
@@ -206,7 +212,7 @@ Thinking backwards starts at the output tags of KNs, and works backwards, as can
 	\label{think_backwards}
 \end{figure}
 
-This type of thinking can be more difficult to implement than forwards thinking, since one must decide what percentage of active output tags of a KN corresponds to an active input tag. For instance, should a KN fire when 100\% of its output nodes are active, or when 75\% are active? This relates to the confidence with which the KNN believes the tag associated with that node to be true. As a concrete example, if you observe an object that has four wheels, seats, and a steering wheel, how confident are you that that object is a car? Realistically, humans will often classify what they observe with some uncertainty \cite{uncertainty} and this can be represented with backwards thinking. This type of thinking occurs constantly in the background in humans \cite{vybihal-knowledge}, and this is something to keep in mind during implementation.
+This type of thinking can be more difficult to implement than forwards thinking, since one must decide what percentage of active output tags of a KN corresponds to an active input tag. For instance, should a KN fire when 100\% of its output nodes are active, or when 75\% are active? This relates to the belief with which the KNN believes the tag associated with that node to be true. As a concrete example, if you observe an object that has four wheels, seats, and a steering wheel, how confident are you that that object is a car? Realistically, humans will often classify what they observe with some uncertainty \cite{uncertainty} and this can be represented with backwards thinking. This type of thinking occurs constantly in the background in humans \cite{vybihal-knowledge}, and this is something to keep in mind during implementation.
 
 Lambda thinking uses a combination of forwards and backwards, and can be seen in \autoref{think_lambda}. It is called ``lambda'' thinking because the shape of the thinking trajectory matches a Greek uppercase lambda ($\Lambda$). It first looks at output tags of KNs and propagates activation backwards, similar to backwards thinking. After a certain amount of nodes are fired, it will then start activating forwards, similar to thinking forwards. An interesting question is how far backwards should lambda thinking go before starting to cascade forwards? This relates to how general one wants to explore before searching for a more specific value.
 
@@ -237,9 +243,9 @@ Facts are simple calculus predicates showing that something is true. Here are so
 
 As a more concrete example, a fact can represent a certain measurement, like $(distance = 5)$ representing the robot's distance from a wall as measured by one of its sensors.
 
-Recommendations represent suggestions for actions to be taken by a robot. For example, $(\#turn\_left)$ is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to actually take that action.
+Recommendations represent suggestions for actions to be taken by a robot. For example, $(@turn\_left)$ is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to actually take that action.
 
-Rules are many-to-many structures with facts as inputs and tags as outputs. This can be seen in \autoref{eq:rule}, where $m \geq 1$ and $n \geq 1$, i.e., there must be at least one input fact and one output tag. Each output tag can either be a fact or a rule. When all the input facts become active, the output tags become active and the rule itself is said to be active. In this way, a rule can represent a logical AND of all its input facts.
+Rules are many-to-many structures with facts as inputs and tags as outputs. This can be seen in \autoref{eq:rule}, where $m \geq 1$ and $n \geq 1$, i.e., there must be at least one input fact and one output tag. Each output tag can either be a fact or a recommendation. When all the input facts become active, the output tags become active and the rule itself is said to be active. In this way, a rule can represent a logical AND of all its input facts.
 
 \begin{equation} \label{eq:rule}
 Fact_1 \cdots Fact_m \rightarrow Tag_1 \cdots Tag_n
@@ -255,6 +261,7 @@ The runtime of the ES consists of the following general steps \cite{vybihal-expe
 \end{enumerate}
 
 The most important part of the previous process is the thinking stage, which represents the activation routine of the ES. This consists of first iterating through all the rules in the ES and checking if they are active by inspecting the lists of facts and recommendations. Rules may then become active and cause cascading activation of more rules. This can continue until there are no more rules to activate, which corresponds to natural quiescence. There can also be a fixed number of thinking cycles, which represents the effort put into thinking, similarly to the KNN. The recommendations activated as a result of thinking are passed on to the final layer, the META.
+\todo{Talk about Isaac's additions}
 
 \subsection{Meta Reasoner}
 
@@ -274,30 +281,27 @@ With this full description of the Prometheus AI model, the system with labeled i
 \label{sec:problem}
 % In this section you should describe the problem or system you are addressing in detail. Describe the project requirements and constraints.
 
-The assigned task this semester is to construct Java prototypes of the KNN and ES. The requirements are that these prototypes should contain basic versions of the functionality described in \autoref{sec:background}. Since the system is to be designed from scratch, the specific design and implementation criteria are to be determined, and will be discussed in \autoref{sec:design}.
-
-The NN and META are to be completed by another Honours Thesis student and will be integrated with the KNN and ES next semester (see \autoref{sec:plan}).
+The main task for this thesis is to construct the KNN and ES in Java. The requirements are that these layers should contain basic versions of the functionality described in \autoref{sec:background}. Another important task is to supervise the work of other undergraduate students working on Prometheus and to put systems in place to ensure a certain standard for the code. The design criteria for both these tasks will be discussed in \autoref{sec:design}, and their implementation will be discussed in \cref{sec:implementation}.
 
 \section{Design}
 \label{sec:design}
 % In this section you must describe any design work that was already completed. Discuss any design decisions that have been made, and describe the process that was followed to make these decisions. Also discuss any results that have already been obtained this semester.
 
 \subsection{Efficiency}
-
 A very important consideration when designing the system is speed. Since the robots may have to react very quickly to stimuli in the environment, the reasoning in the AI must be as fast as possible. This is especially true in the hazardous environments for which this system could be useful for, as specified in \autoref{sec:intro}.
 
 \subsection{Object Oriented Programming}
-
 Another important design choice is to leverage object-oriented programming (OOP) as much as possible. OOP allows extensive planning before even beginning to write code, which can identify any flaws in the initial design. It also allows the code to be very clean and reusable \cite{oop}. Since Java is the programming language chosen for the project, OOP is also the natural way to proceed.  OOP principles such as polymorphism and encapsulation will be followed closely. One important OOP principle to use is abstraction. Indeed, the system should be as abstract as possible, while still performing its desired task. For instance, the system should be general enough to perform under simulations, as well as in real-life environments. It should also ideally be able to perform in vastly different environments, with varying tasks. Encapsulation can also be very useful, since each layer of the system has unique, localized functionality that does not need to be visible from the rest of the system.
 \todo{Talk about more complex principles (Liskov, dependency inversion, injection, SOLID)}
 
 \subsection{Readability \& Documentation}
-
 One final design criterion is that the code written should be very easy to understand. This means implementing each method and class in the most intuitive way possible and providing good documentation to support the code. This is to ensure that anyone wanting to work with the code or looking to understand how the system works has an easy time doing so.
 
-
 \subsection{Testing}
-\todo{BDD, test coverage requirement}
+An important criterion is that the code be heavily tested. This includes integration tests, covering end-to-end functionality, and unit tests. The unit tests should be behavior-driven, so that a developer reading the tests can easily understand the purpose of the element being tested. The aim is that at least \SI{95}{percent} of the code be covered by tests.
+
+\subsection{Quality Assurance}
+With the numerous undergraduate students showing interest in working on Prometheus, there must be a system in place to ensure the quality of the code is upheld. This may include automatic testing of the code, as well as human review of code before being committed.
 
 \section{Implementation}
 \label{sec:implementation}
@@ -310,14 +314,14 @@ The tags need to be as general as possible. A natural choice for this structure 
 
 The \code{Tag} class has an associated \code{Type}, which can take the following \code{enum} values: \code{FACT}, \code{RECOMMENDATION}, and \code{RULE}. This is used to distinguish the three types of \code{Tags}.
 
-The \code{Fact} and \code{Recommendation} classes at this point are little more than wrapper classes around a \code{String} value. More interesting feaures will be added later on (see \autoref{sec:plan}). The \code{Rule} class has the following important fields:
+The \code{Fact} and \code{Recommendation} classes at this point are little more than wrapper classes around a \code{String} value. The \code{Rule} class has the following important fields:
 
 \begin{labeling}{\code{inputFacts}}
-	\item[\code{inputFacts}] \code{Array} of input \code{Facts}.
-	\item[\code{outputTags}] \code{Array} of output \code{Tags}.
+	\item[\code{inputFacts}] \code{List} of input \code{Facts}.
+	\item[\code{outputTags}] \code{List} of output \code{Tags}.
 \end{labeling}
 
-The \code{Tag} class itself was made abstract. This means that an object may not be directly instantiated as a \code{Tag}, but must be instantiated as one of its subclasses. This makes sense, since a tag \emph{must} be one of the three types: rule, recommendation or fact. This is an example of using the abstraction principle of OOP.
+The \code{Tag} class itself is abstract. This means that an object may not be directly instantiated as a \code{Tag}, but must be instantiated as one of its subclasses. This makes sense, since a tag \emph{must} be one of the three types: rule, recommendation or fact. This is an example of using the abstraction principle of OOP.
 
 All of these classes were placed inside the \code{tags} package. A UML diagram of the \code{tags} package can be seen in \autoref{uml_tags} of the Appendix.
 
