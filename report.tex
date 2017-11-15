@@ -429,6 +429,7 @@ Finally, we see in the \code{thinkCycle()} method a call to the \code{addTag()} 
 
 \subsection{Testing}
 
+\todo{Remake these old tests. Name them 'simple'.}
 All tests on the system were conducted using the TestNG framework in Java, which provides a simple and intuitive way to create assertions in tests. These tests were placed in the \code{test} package of the project. A UML diagram of the \code{test} package can be seen in \autoref{uml_test} of the Appendix. The primary methods of interest in the test package are \code{testKNN()}, \code{testES()}, and \code{testKNNandES()}.
 
 The test setup for the \code{testKNN()} method can be seen in \autoref{testKNN}. It creates a KNN, with every node having a \code{threshold} value of 1 to simplify the activation process. The system starts out with $A$ as the only active \code{Tag}, and \code{testKNN()} will make the KNN \code{think()} until natural quiescence. It is therefore expected that all the \code{Tags} shown in \autoref{testKNN} will become active by the end of the thinking process. The initial and final states are both asserted with TestNG in \code{testKNN()}, with positive results.
