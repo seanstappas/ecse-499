@@ -33,7 +33,7 @@
 	\section{Meetings}
 	% Provide a list of group meeting with dates and a very brief summary of topic of each meeting. Provide a list of dates when you met with your project supervisor(s).
 	
-	Meetings occurred on November \nth{3} and November \nth{10} with Prof. Vybihal, where progress and plans were discussed. A meeting also occurred on November \nth{2} with Michael Ding, an undergraduate student interested in working on the META layer of Prometheus.
+	Meetings occurred on November \nth{3} and November \nth{10} with Prof. Vybihal, where progress and plans were discussed. A meeting also occurred on November \nth{2} with Michael Ding, an undergraduate student interested in working on the META layer of Prometheus. Here, we discussed some of the background information that he needed and my experience working on the project.
 	
 	\section{Project Readings} \label{sec:readings}
 	% Provide a bibliography of any material you have read since the beginning of the semester and any material you have identified for future reading in relation to your project.
@@ -43,19 +43,17 @@
 	\section{Recent Progress} \label{sec:progress}
 	% Summarize your progress since your last report. Compare this your original plans, and identify difficulties that hindered your progress and the steps you are taking to overcome them. (1/2 page maximum).
 	
-	Work was done on the KNN layer to refactor it. This includes removing unnecessary or redundant code and simplifying overly complex methods.
+	Work was done on the KNN layer to refactor it. This mostly includes removing unnecessary or redundant code and simplifying overly complex methods. In some instances, the code contributed by the undergraduate students here does not function correctly, and requires a complete re-write. This was partially completed.
 	
 	With all the undergraduate students showing interest in the development of Prometheus, many elements were put in place to ensure a quality standard for the code base on the GitHub repository. First, a REAME was created with some background information to get started working on the code. This includes information about all the libraries used (Guice, Mockito, TestNG, etc.) as well as pointers for making changes. Next, a code review system was put in place. If a student wants to work on the code, they must first create their own branch and then submit a pull request once they feel it can be merged back into the main branch. At this point, the code must be reviewed by me before merging. If necessary, changes can be suggested to complete the review. Finally, a continuous testing system was put in place with Travis CI. For each of the aforementioned pull requests, all the unit and integration tests in the code must pass before merging. With all these systems in place, it should be easier to enforce a quality standard.
 	
-	A one-page outline of what is planned to be discussed in the final report was provided to Prof. Vybihal. The aim is to get some feedback on the overall structure before diving into the writing. An rough initial draft of the report and poster were also created.
-	
-	Finally, a draft of the Javadoc associated with the code was updated and can be seen here: \url{http://cs.mcgill.ca/~sstapp/prometheus/index.html}.
+	Other important tasks were also completed. A one-page outline of what is planned to be discussed in the final report was provided to Prof. Vybihal. The aim is to get some feedback on the overall structure before diving into the writing. An rough initial draft of the report and poster were also created. A draft of the Javadoc associated with the code was updated and can be seen here: \url{http://cs.mcgill.ca/~sstapp/prometheus/index.html}. Finally, initial work was done on creating a demo of Prometheus to visualize the KNN. This was done using the GraphStream Java library for visualizing graphs.
 	
 	
 	\section{Future Plans} \label{sec:plans}
 	% Summarize your plans for future work for the period until the next report is due. Provide an expected timeline for your progress (1/2 page maximum).
 		
-	The plans for the next two weeks are to finish refactoring and creating unit tests for the KNN layer. Also, work will start to create a demo of Prometheus to be shown during the poster presentation. This will most likely take the form of some visualization of the ES and/or KNN in the form of a connected graph. It is expected that this will take around a week of work. Work will also be continued on the poster and the final report, with the poster draft due on November \nth{24} and the report draft due on December \nth{1}.
+	The plans for the next two weeks are to finish refactoring and creating unit tests for the KNN layer. Also, a demo of Prometheus will be finalized to show to viewers of the poster presentation. This will most likely take the form of some visualization of the ES and/or KNN in the form of a connected graph. It is expected that this will take around a week of work. Work will also be continued on the poster and the final report, with the poster draft due on November \nth{24} and the report draft due on December \nth{1}.
 	
 	%\renewcommand\refname{}
 	%\bibliographystyle{unsrt}
