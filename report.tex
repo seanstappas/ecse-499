@@ -117,6 +117,7 @@ The following abbreviations will be used throughout the report:
 	\centering
 	\caption{Abbreviations in Prometheus.}
 	\begin{tabular}{r | l}
+		\textbf{Symbol} & \textbf{Meaning} \\ \hline
 		NN & Neural Network \\
 		KNN & Knowledge Node Network \\
 		KN & Knowledge Node \\
@@ -143,11 +144,12 @@ The system is loosely inspired from the structure of the human brain, and is com
 \end{figure}
 
 The theory needed to understand these four layers will be given in \autoref{sec:background}. The assigned task will then be described in \autoref{sec:problem}. Design criteria will be discussed in \autoref{sec:design}. The description of the work done this semester can be found in \autoref{sec:implementation}, and the results and tests will be discussed in \autoref{sec:results}. Finally, the possible future impact of this project on society and the environment will be explored in \autoref{sec:impact}.
-\todo{Mention scope of thesis (where my part fits in to bigger whole)}
+
+The scope of this thesis is primarily to implement the KNN and ES in Prometheus. Therefore, more detail will be given for these layers.
 
 \section{Background} \label{sec:background}
 % In this section you should summarize the theory and background that you had to learn, and that you believe are necessary for the reader to understand the rest of the report.
-\todo{Mention that this section draws heavily from previous report.}
+This section draws heavily from the background discussed in the previous report \cite{stappas}.
 
 \subsection{Neural Network}
 
@@ -192,12 +194,11 @@ Note that the activation of a KN and the belief value associated with it are two
 Age represents how long it has been since a KN has been excited. The idea is that, after a KN has aged a certain amount of time, that node will be discarded, similarly to how old memories are discarded in the brain \cite{aging}. The intuitive implementation of aging is to constantly increment some age value associated with every KN, and discard nodes whose age is greater than some threshold. The age would be reset to 0 when the node is excited. This would however be unnecessarily computationally intensive, requiring some kind of constant updating of every single node. A more efficient way of doing it would be to save a timestamp for every KN when it is excited, and if the KNN attempts to excite a KN whose previous timestamp value is too far into the past, that node is instead deleted.
 \todo{Move some of this to implementation?}
 
-Thinking in the KNN represents an activation routine, which activates tags and potentially fires KNs. The KNN has four main ways of thinking: direct, forwards, backwards, and lambda. The version of thinking to be done by the KNN is chosen by the META.
-\todo{Differentiate between searching and thinking (traversal)}
+Searching in the KNN represents an activation routine, which activates tags and potentially fires KNs. The KNN has four ways of searching: direct, forward, backward, and lambda. Thinking in the KNN is a related concept to searching. Whereas in search input tags are provided to guide the KNN, in thinking, the KNN uses its currently active tags to activate further tags. In this way, thinking is a special case of searching, where the input tags of the search are the active tags in the KNN. The KNN has three ways of thinking: forward, backward, and lambda. The version of searching or thinking to be done by the KNN is chosen by the META. 
 
-Direct thinking is a simple lookup of the desired Tag and excitation of the associated KN. This represents the simplest form of thinking in the KNN.
+Direct searching is a simple lookup of the desired Tag and excitation of the associated KN. This represents the simplest form of thinking in the KNN.
 
-Forwards thinking is depicted in \autoref{think_forwards}. Firing a KN can cause forward activation of more KNs, hence the ``forwards'' naming.
+Forward thinking is depicted in \autoref{think_forwards}. Firing a KN can cause forward activation of more KNs, hence the ``forwards'' naming.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/forwards_thinking.pdf}
@@ -205,7 +206,7 @@ Forwards thinking is depicted in \autoref{think_forwards}. Firing a KN can cause
 	\label{think_forwards}
 \end{figure}
 
-Thinking backwards starts at the output tags of KNs, and works backwards, as can seen in \autoref{think_backwards}. In its simplest form, it checks output tags of KNs and, if all of them are active, the input tag must be active as well, so that KN is fired.
+Thinking backward starts at the output tags of KNs, and works backwards, as can seen in \autoref{think_backwards}. In its simplest form, it checks output tags of KNs and, if all of them are active, the input tag must be active as well, so that KN is fired.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/backwards_thinking.pdf}
@@ -218,14 +219,14 @@ This type of thinking can be more difficult to implement than forwards thinking,
 Lambda thinking uses a combination of forwards and backwards, and can be seen in \autoref{think_lambda}. It is called ``lambda'' thinking because the shape of the thinking trajectory matches a Greek uppercase lambda ($\Lambda$). It first looks at output tags of KNs and propagates activation backwards, similar to backwards thinking. After a certain amount of nodes are fired, it will then start activating forwards, similar to thinking forwards. An interesting question is how far backwards should lambda thinking go before starting to cascade forwards? This relates to how general one wants to explore before searching for a more specific value.
 
 \begin{figure}[!htb]
-\includegraphics[width=\columnwidth]{figures/lambda_thinking.pdf}
-\caption{Lambda thinking in the KNN.}
-\label{think_lambda}
+	\includegraphics[width=\columnwidth]{figures/lambda_thinking.pdf}
+	\caption{Lambda thinking in the KNN.}
+	\label{think_lambda}
 \end{figure}
 
 This type of thinking occurs in humans when using analogical reasoning to find a memory \cite{vybihal-lambda}. In essence, when a person wants to locate a memory that is not directly accessible, they will explore related memories, move their way ``backwards'' to concepts related to the desired memory, and think ``forwards'' to focus in on the desired memory. For example, if one is asked where they were in 2002 on a specific date, they most likely would not remember. If they explore related dates and events in their life, however, they may be able to narrow down and extract that memory. In the context of the Prometheus system, lambda thinking will be attempted if all other forms of thinking fail (forwards and backwards).
 
-All forms of thinking can continue until there are no more KNs to activate, which corresponds to natural quiescence. There can also be a fixed number of thinking cycles, which represents how much effort is being put into thinking. Indeed, in humans, thinking is done with varying degrees of effort \cite{thinking}, and it would be interesting to model this.
+All forms of thinking can continue until there are no more KNs to activate, which corresponds to natural quiescence. There can also be a fixed number of thinking cycles, which represents how much effort is being put into thinking. Indeed, in humans, thinking is done with varying degrees of effort \cite{thinking}. This number of thinking cycles also represents how deep the search will go into the knowledge node graph, and is therefore called ``ply''.
 
 The result of all forms of thinking is a collection of activated tags, which are passed on to the ES.
 
@@ -233,18 +234,26 @@ The result of all forms of thinking is a collection of activated tags, which are
 
 The ES layer is a basic logic reasoner. It is not aware of its current reality or any context. It takes in the tags provided by the KNN and interprets them as either facts, recommendations or rules.
 
-Facts are simple calculus predicates showing that something is true. Here are some examples of fact tags and their meanings:
+Facts are simple calculus predicates showing that something is true. \cref{table:fact_predicates} shows some examples of fact tags and their meanings.
 
-\begin{labeling}{$(A > 1)$}
-	\item[$(A)$] $A$ itself is true or active.
-	\item[$(A = 1)$] $A$ is equal to 1.
-	\item[$(A > 1)$] $A$ is greater than 1.
-	\item[$(A \ ?)$] $A$ can take any value.
-\end{labeling}
+\begin{table}[!htb]
+	\centering
+	\caption{Fact predicates in the ES.}
+	\begin{tabular}{r | l}
+		\textbf{Fact} & \textbf{Meaning} \\ \hline
+		$(A)$ & $A$ is true or active.\\
+		$(A = 1)$ & $A$ is equal to 1. \\
+		$(A > 1)$ & $A$ is greater than 1. \\
+		$(A \ ?)$ & $A$ can take any value.
+	\end{tabular}
+	\label{table:fact_predicates}
+\end{table}
 
 As a more concrete example, a fact can represent a certain measurement, like $(distance = 5)$ representing the robot's distance from a wall as measured by one of its sensors.
 
 Recommendations represent suggestions for actions to be taken by a robot. For example, $(@turn\_left)$ is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to actually take that action.
+
+\todo{Talk more about Isaac's additions}
 
 Rules are many-to-many structures with facts as inputs and tags as outputs. This can be seen in \autoref{eq:rule}, where $m \geq 1$ and $n \geq 1$, i.e., there must be at least one input fact and one output tag. Each output tag can either be a fact or a recommendation. When all the input facts become active, the output tags become active and the rule itself is said to be active. In this way, a rule can represent a logical AND of all its input facts.
 
@@ -262,7 +271,6 @@ The runtime of the ES consists of the following general steps \cite{vybihal-expe
 \end{enumerate}
 
 The most important part of the previous process is the thinking stage, which represents the activation routine of the ES. This consists of first iterating through all the rules in the ES and checking if they are active by inspecting the lists of facts and recommendations. Rules may then become active and cause cascading activation of more rules. This can continue until there are no more rules to activate, which corresponds to natural quiescence. There can also be a fixed number of thinking cycles, which represents the effort put into thinking, similarly to the KNN. The recommendations activated as a result of thinking are passed on to the final layer, the META.
-\todo{Talk about Isaac's additions}
 
 \subsection{Meta Reasoner}
 
