@@ -11,8 +11,9 @@
 %\usepackage{times}\usefonttheme{professionalfonts}  % times is obsolete
 \usefonttheme[onlymath]{serif}
 \boldmath
-\usepackage[orientation=landscape,size=a1,scale=1.4,debug]{beamerposter}
-\usepackage{float}                  % e.g. for DIN-A0 poster
+\usepackage[orientation=landscape,size=a1,debug]{beamerposter}
+\usepackage{float}    
+\usepackage{subcaption}              % e.g. for DIN-A0 poster
 %\usepackage[orientation=portrait,size=a1,scale=1.4,grid,debug]{beamerposter}                  % e.g. for DIN-A1 poster, with optional grid and debug output
 %\usepackage[size=custom,width=200,height=120,scale=2,debug]{beamerposter}                     % e.g. for custom size poster
 %\usepackage[orientation=portrait,size=a0,scale=1.0,printer=rwth-glossy-uv.df]{beamerposter}   % e.g. for DIN-A0 poster with rwth-glossy-uv printer check
@@ -41,6 +42,10 @@
 				\end{figure}
 			
 				\begin{figure}[!htb]
+					\centering
+					\caption{Thinking forwards in the KNN.}
+				\end{figure}
+				\begin{figure}[!htb]
 					\includegraphics[width=0.5\columnwidth]{figures/forwards_thinking.pdf}
 					\caption{Thinking forwards in the KNN.}
 					\label{think_forwards}
@@ -67,37 +72,111 @@
 		\begin{block}{Implementation}
 		\begin{figure}[!htb]
 			\centering
-			\includegraphics[width=0.5\columnwidth]{figures/guice_graph.pdf}
+			\includegraphics[width=\columnwidth]{figures/guice_graph.pdf}
 			\caption
 			{Guice dependency graph.}
 		\end{figure}
 	
 		\begin{figure}[!htb]
 			\centering
-			\includegraphics[width=0.5\columnwidth]{figures/prometheus_uml.pdf}
+			\includegraphics[width=0.5\columnwidth]{figures/prometheus_tags.pdf}
 			\caption
-			{Prometheus package.}
+			{Tag inheritance graph.}
+		\end{figure}
+		
+		\begin{figure}[!htb]
+			\centering
+%			\begin{subfigure}[!htb]{0.3\textwidth}
+%				\centering
+%				\includegraphics[width=\textwidth]{figures/prometheus_uml.pdf}
+%				\caption
+%				{Prometheus package.}
+%			\end{subfigure}
+%			~
+			\begin{subfigure}[!htb]{0.4\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{figures/es_uml.pdf}
+				\caption
+				{ES package.}
+			\end{subfigure}
+			~
+			\begin{subfigure}[!htb]{0.4\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{figures/knn_uml.pdf}
+				\caption
+				{KNN package.}
+			\end{subfigure}
+			\caption{UML diagrams for the major modules.}
+		\end{figure}
+	
+	
+		\begin{figure}[!htb]
+			\centering
+			\includegraphics[width=.3\columnwidth]{figures/knn_graph.png}
+			\caption{Visualization of the KNN. Small nodes are Tags, big nodes are Knowledge Nodes (KNs). Red nodes represent active Tags or fired KNs. For non-active Tags, Facts are purple, Rules are blue and Recommendations are orange.}
 		\end{figure}
 	
 		\begin{figure}[!htb]
 			\centering
-			\includegraphics[width=0.5\columnwidth]{figures/es_uml.pdf}
-			\caption
-			{ES package.}
+			\begin{subfigure}[!htb]{0.18\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{figures/knn_forward_think_1.png}
+				\caption{Ply 1.}
+			\end{subfigure}
+			~
+			\begin{subfigure}[!htb]{0.18\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{figures/knn_forward_think_2.png}
+				\caption{Ply 2.}
+			\end{subfigure}
+			~
+			\begin{subfigure}[!htb]{0.18\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{figures/knn_forward_think_3.png}
+				\caption{Ply 3.}
+			\end{subfigure}
+			~
+			\begin{subfigure}[!htb]{0.18\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{figures/knn_forward_think_4.png}
+				\caption{Ply 4.}
+			\end{subfigure}
+			~
+			\begin{subfigure}[!htb]{0.18\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{figures/knn_forward_think_5.png}
+				\caption{Ply 5.}
+			\end{subfigure}
+			\caption{Forward thinking visualization in the KNN.}
 		\end{figure}
+	
 	
 		\begin{figure}[!htb]
 			\centering
-			\includegraphics[width=0.5\columnwidth]{figures/knn_uml.pdf}
-			\caption
-			{KNN package.}
-		\end{figure}
-	
-		\begin{figure}[!htb]
-			\centering
-			\includegraphics[width=0.5\columnwidth]{figures/knn_backward_think_1.png}
-			\caption
-			{Visualization of the KNN.}
+			\begin{subfigure}[!htb]{0.18\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{figures/knn_backward_think_1.png}
+				\caption{Ply 1.}
+			\end{subfigure}
+			~
+			\begin{subfigure}[!htb]{0.18\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{figures/knn_backward_think_2.png}
+				\caption{Ply 2.}
+			\end{subfigure}
+			~
+			\begin{subfigure}[!htb]{0.18\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{figures/knn_backward_think_3.png}
+				\caption{Ply 3.}
+			\end{subfigure}
+			~
+			\begin{subfigure}[!htb]{0.18\columnwidth}
+				\centering
+				\includegraphics[width=\columnwidth]{figures/knn_backward_think_4.png}
+				\caption{Ply 4.}
+			\end{subfigure}
+			\caption{Backward thinking visualization in the KNN.}
 		\end{figure}
 	
 		\end{block}
@@ -109,6 +188,27 @@
 				\item Integration tests
 				\item TestNG and TravisCI
 			\end{itemize}
+		
+			\begin{figure}[!htb]
+				\centering
+				\includegraphics[width=\textwidth]{figures/testES.pdf}
+				\caption
+				{Simple ES test setup.}
+			\end{figure}
+		
+			\begin{figure}[!htb]
+				\centering
+				\includegraphics[width=\textwidth]{figures/animal_knn.png}
+				\caption
+				{Elaborate test KNN network.}
+			\end{figure}
+		
+			\begin{figure}[!htb]
+				\centering
+				\includegraphics[width=0.5\columnwidth]{figures/test_results.pdf}
+				\caption
+				{Test results for various modules.}
+			\end{figure}
 		\end{block}
 		\begin{block}{Conclusion}
 		\end{block}
