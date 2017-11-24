@@ -14,6 +14,7 @@
 \usepackage[orientation=landscape,size=a1,debug]{beamerposter}
 \usepackage{float}    
 \usepackage{subcaption}              % e.g. for DIN-A0 poster
+\usepackage{siunitx}
 %\usepackage[orientation=portrait,size=a1,scale=1.4,grid,debug]{beamerposter}                  % e.g. for DIN-A1 poster, with optional grid and debug output
 %\usepackage[size=custom,width=200,height=120,scale=2,debug]{beamerposter}                     % e.g. for custom size poster
 %\usepackage[orientation=portrait,size=a0,scale=1.0,printer=rwth-glossy-uv.df]{beamerposter}   % e.g. for DIN-A0 poster with rwth-glossy-uv printer check
@@ -64,29 +65,27 @@
 					
 					\begin{figure}[!htb]
 						\centering
-						\begin{subfigure}[!htb]{0.4\columnwidth}
+						\begin{subfigure}[!htb]{0.49\columnwidth}
 							\centering
-							\includegraphics[height=2in]{figures/direct_search.pdf}
+							\includegraphics[height=2.5in]{figures/direct_search.pdf}
 							\caption{Direct searching.}
 						\end{subfigure}
-						\quad
-						\begin{subfigure}[!htb]{0.4\columnwidth}
+						\begin{subfigure}[!htb]{0.49\columnwidth}
 							\centering
-							\includegraphics[height=2in]{figures/forwards_thinking.pdf}
+							\includegraphics[height=2.5in]{figures/forwards_thinking.pdf}
 							\caption{Forward searching/thinking.}
 							\label{think_forwards}
 						\end{subfigure}
 						\bigskip
-						\begin{subfigure}[!htb]{0.4\columnwidth}
+						\begin{subfigure}[!htb]{0.49\columnwidth}
 							\centering
-							\includegraphics[height=2.1in]{figures/backwards_thinking.pdf}
+							\includegraphics[height=2.5in]{figures/backwards_thinking.pdf}
 							\caption{Backward searching/thinking.}
 							\label{think_backwards}
 						\end{subfigure}
-						~
-						\begin{subfigure}[!htb]{0.4\columnwidth}
+						\begin{subfigure}[!htb]{0.49\columnwidth}
 							\centering
-							\includegraphics[height=2.1in]{figures/lambda_thinking.pdf}
+							\includegraphics[height=2.5in]{figures/lambda_thinking.pdf}
 							\caption{Lambda searching/thinking.}
 							\label{think_lambda}
 						\end{subfigure}
@@ -144,7 +143,7 @@
 				\end{block}
 			}
 			\end{column}
-			\begin{column}{.35\textwidth}
+			\begin{column}{.34\textwidth}
 				\parbox[t][\columnheight]{\textwidth}{
 				\begin{block}{Design \& Implementation}
 					\begin{itemize}
@@ -170,11 +169,30 @@
 						\end{itemize}
 					\end{itemize}
 				
-					\begin{figure}[!htb]
-						\centering
-						\includegraphics[width=0.5\columnwidth]{figures/prometheus_tags.pdf}
-						\caption
-						{Tag inheritance graph.}
+					\begin{figure}
+						\raggedleft
+						\begin{subfigure}[b]{0.49\textwidth}
+							\centering
+							\includegraphics[height=1.5in]{figures/uml_prometheus.pdf}
+							\caption{Prometheus UML diagram.}
+						\end{subfigure}
+						\begin{subfigure}[b]{0.49\textwidth}
+							\centering
+							\includegraphics[height=1.5in]{figures/uml_es.pdf}
+							\caption{ES UML diagram.}
+						\end{subfigure}
+						\bigskip
+						\begin{subfigure}[b]{0.49\textwidth}
+							\centering
+							\includegraphics[height=1.5in]{figures/uml_tags.pdf}
+							\caption{Tags UML diagram.}
+						\end{subfigure}
+						\begin{subfigure}[b]{0.49\textwidth}
+							\centering
+							\includegraphics[height=1.5in]{figures/uml_knn.pdf}
+							\caption{KNN UML diagram.}
+						\end{subfigure}
+						\caption{UML diagrams of the major modules in Prometheus.}
 					\end{figure}
 					
 %					\begin{figure}[!htb]
@@ -213,6 +231,7 @@
 						\begin{itemize}
 							\item Testing individual methods of every class in the KNN and ES.
 							\item Dependencies mocked using the Mockito library.
+							\item \SI{90}{\percent} coverage.
 						\end{itemize}
 					\end{itemize}
 					
@@ -221,6 +240,7 @@
 						\begin{itemize}
 							\item Testing end-to-end behavior of the ES and KNN modules.
 							\item All unit and integration tests written with TestNG and executed with TravisCI.
+							\item \SI{95}{\percent} coverage.
 						\end{itemize}
 					\end{itemize}
 				
@@ -233,20 +253,23 @@
 				\end{block}
 				}
 			\end{column}
-			\begin{column}{.3\textwidth}
+			\begin{column}{.35\textwidth}
 				\parbox[t][\columnheight]{\textwidth}{
 				\begin{block}{Results \& Tests (continued)}
 					\begin{figure}[!htb]
 						\centering
 						\includegraphics[width=\textwidth]{figures/animal_knn.pdf}
 						\caption
-						{Elaborate test KNN network representing connections between memories of animals and their characteristics.}
+						{Elaborate test KNN network representing connections between memories of animals and their characteristics. Credit for creating the graph goes to volunteer Laurence Liang.}
 					\end{figure}
 					
 					\begin{itemize}
 						\item Graph visualization tests.
 						\begin{itemize}
 							\item Iterations of the KNN searching algorithms are presented visually.
+							\item Small nodes are Tags, big nodes are Knowledge Nodes (KNs).
+							\item Red nodes represent active Tags or fired KNs. 
+							\item For non-active Tags, Facts are purple, Rules are blue and Recommendations are orange.
 						\end{itemize}
 					\end{itemize}
 					
