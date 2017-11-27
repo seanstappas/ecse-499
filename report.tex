@@ -137,11 +137,11 @@ Applications for this type of system include robots in hazardous environments, s
 
 The system is loosely inspired from the structure of the human brain, and is composed of the following four layers \cite{vybihal-model}: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES), and the Meta Reasoner (META), which can be seen in \autoref{model}.
 
-\begin{figure}[!htb]
-	\includegraphics[width=\columnwidth]{figures/ai_model.pdf}
+\begin{figure*}[!htb]
+	\includegraphics[width=\textwidth]{figures/ai_model.pdf}
 	\caption[Prometheus AI model.]{Prometheus AI model. Blue represents Prometheus and green represents the robots.}
 	\label{model}
-\end{figure}
+\end{figure*}
 
 The theory needed to understand these four layers will be given in \autoref{sec:background}. The assigned task will then be described in \autoref{sec:problem}. Design criteria will be discussed in \autoref{sec:design}. The description of the work done this semester can be found in \autoref{sec:implementation}, and the results and tests will be discussed in \autoref{sec:results}. Finally, the possible future impact of this project on society and the environment will be explored in \autoref{sec:impact}.
 
@@ -196,7 +196,13 @@ Age represents how long it has been since a KN has been excited. The idea is tha
 
 Searching in the KNN represents an activation routine, which activates tags and potentially fires KNs. The KNN has four ways of searching: direct, forward, backward, and lambda. Thinking in the KNN is a related concept to searching. Whereas in search input tags are provided to guide the KNN, in thinking, the KNN uses its currently active tags to activate further tags. In this way, thinking is a special case of searching, where the input tags of the search are the active tags in the KNN. The KNN has three ways of thinking: forward, backward, and lambda. The version of searching or thinking to be done by the KNN is chosen by the META. 
 
-Direct searching is a simple lookup of the desired Tag and excitation of the associated KN. This represents the simplest form of thinking in the KNN.
+Direct searching is a simple lookup of the desired Tag and excitation of the associated KN. This represents the simplest form of thinking in the KNN and can be seen in \cref{fig:direct_search}.
+
+\begin{figure}[!htb]
+	\includegraphics[width=\columnwidth]{figures/direct_search.pdf}
+	\caption{Direct search in the KNN.}
+	\label{fig:direct_search}
+\end{figure}
 
 Forward thinking is depicted in \autoref{think_forwards}. Firing a KN can cause forward activation of more KNs, hence the ``forwards'' naming.
 
@@ -234,31 +240,41 @@ The result of all forms of thinking is a collection of activated tags, which are
 
 The ES layer is a basic logic reasoner. It is not aware of its current reality or any context. It takes in the tags provided by the KNN and interprets them as either facts, recommendations or rules.
 
-Facts are simple calculus predicates showing that something is true. \cref{table:fact_predicates} shows some examples of fact tags and their meanings.
+Facts are simple calculus predicates showing that something is true. They take the form of a predicate, as shown in \cref{eq:fact}, where $P$ is the predicate name and each $A_i$ is an argument.
+
+\begin{equation} \label{eq:fact}
+	P(A_1, \ldots, A_n)
+\end{equation}
+
+\cref{table:fact_predicates} shows some examples fact with simple arguments and their meanings.
 
 \begin{table}[!htb]
 	\centering
-	\caption{Fact predicates in the ES.}
+	\caption{Examples of facts in the ES.}
 	\begin{tabular}{r | l}
 		\textbf{Fact} & \textbf{Meaning} \\ \hline
-		$(A)$ & $A$ is true or active.\\
-		$(A = 1)$ & $A$ is equal to 1. \\
-		$(A > 1)$ & $A$ is greater than 1. \\
-		$(A \ ?)$ & $A$ can take any value.
+		$P(x)$ & $x$ is true or active.\\
+		$P(x = 1)$ & $x$ is equal to 1. \\
+		$P(x \ != 1)$ & $x$ is not equal to 1. \\
+		$P(x > 1)$ & $x$ is greater than 1. \\
+		$P(x < 1)$ & $x$ is less than 1. \\
+		$P(\&x)$ & $x$ can take any integer value. \\
+		$P(*)$ & All arguments can take any value. \\
+		$P(?)$ & One argument can take any value. \\
 	\end{tabular}
 	\label{table:fact_predicates}
 \end{table}
 
-As a more concrete example, a fact can represent a certain measurement, like $(distance = 5)$ representing the robot's distance from a wall as measured by one of its sensors.
+As a more concrete example, a fact argument can represent a certain measurement, like $distance = 5$ representing the robot's distance from a wall as measured by one of its sensors.
 
-Recommendations represent suggestions for actions to be taken by a robot. For example, $(@turn\_left)$ is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to actually take that action.
+Recommendations represent suggestions for actions to be taken by a robot. They take on the same predicate form as Facts, as shown in \cref{eq:fact}. The only difference is that it is customary to prefix the predicate with a `@' character. For example, @Turn(left) is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to actually take that action.
 
 \todo{Talk more about Isaac's additions}
 
 Rules are many-to-many structures with facts as inputs and tags as outputs. This can be seen in \autoref{eq:rule}, where $m \geq 1$ and $n \geq 1$, i.e., there must be at least one input fact and one output tag. Each output tag can either be a fact or a recommendation. When all the input facts become active, the output tags become active and the rule itself is said to be active. In this way, a rule can represent a logical AND of all its input facts.
 
 \begin{equation} \label{eq:rule}
-Fact_1 \cdots Fact_m \rightarrow Tag_1 \cdots Tag_n
+	Fact_1, \ldots, Fact_m \rightarrow Tag_1, \ldots, Tag_n
 \end{equation}
 
 The runtime of the ES consists of the following general steps \cite{vybihal-expert}:
@@ -319,30 +335,38 @@ With the numerous undergraduate students showing interest in working on Promethe
 
 As described in \autoref{sec:background}, the entire system revolves around tags passed from layer to layer. For this reason, a lot of thought was put into the proper design of these tags.
 
-The tags need to be as general as possible. A natural choice for this structure would be a Java \code{String}, which would be relatively simple to pass around the system. However, these tags represent various concepts; each tag can either be a fact, a recommendation or a rule. If implemented as \code{Strings}, the tags would have to be encoded on creation to represent each concept and decoded on use to retrieve the important information. This seems like a bad use of the OOP principles of Java. Furthermore, if specific functionality is needed in the future for each tag type, that can easily be implemented with a Java class. For these reasons, the tags are implemented using a \code{Tag} Java class, with \code{Recommendation}, \code{Fact}, and \code{Rule} subclasses. This is a good example of using the inheritance principle of OOP. This should also make manipulating the Tags faster, while incurring a slight memory overhead. To store these Tags in a database, they can be converted to JSON format. On read from the database, they can be easily decoded.
+The tags need to be as general as possible. A natural choice for this structure would be a Java \code{String}, which would be relatively simple to pass around the system. However, these tags represent various concepts; each tag can either be a fact, a recommendation or a rule. If implemented as \code{Strings}, the tags would have to be encoded on creation to represent each concept and decoded on use to retrieve the important information. This seems like a bad use of the OOP principles of Java. Furthermore, if specific functionality is needed in the future for each tag type, that can easily be implemented with a Java class. For these reasons, the tags are implemented using a \code{Tag} Java class, with \code{Predicate} and \code{Rule} subclasses. The \code{Predicate} class is a superclass of the \code{Fact} and \code{Recommendation} classes, as shown in \cref{fig:uml_tags}. This is a good example of using the inheritance principle of OOP. This should also make manipulating the Tags faster, while incurring a slight memory overhead. To store these Tags in a database, they can be converted to JSON format. On read from the database, they can be easily decoded. All these classes are present in the \code{tags} package of the code.
 
-The \code{Tag} class has an associated \code{Type}, which can take the following \code{enum} values: \code{FACT}, \code{RECOMMENDATION}, and \code{RULE}. This is used to distinguish the three types of \code{Tags}.
+\begin{figure}[!htb]
+	\includegraphics[width=\columnwidth]{figures/uml_tags.pdf}
+	\caption{UML diagram of the major classes in the \code{tags} package.}
+	\label{fig:uml_tags}
+\end{figure}
 
-The \code{Fact} and \code{Recommendation} classes at this point are little more than wrapper classes around a \code{String} value. The \code{Rule} class has the following important fields:
+The \code{Tag} and \code{Predicate} classes themselves are abstract. This means that an object may not be directly instantiated as either, but must be instantiated as one of its subclasses. This makes sense, since a tag \emph{must} be one of the three types: rule, recommendation or fact. This is an example of using the abstraction principle of OOP.
 
-\begin{labeling}{\code{inputFacts}}
-	\item[\code{inputFacts}] \code{List} of input \code{Facts}.
-	\item[\code{outputTags}] \code{List} of output \code{Tags}.
+The \code{Rule} class has the following important fields:
+
+\begin{labeling}{\code{outputPredicates}}
+	\item[\code{inputFacts}] \code{Set} of input \code{Facts}.
+	\item[\code{outputPredicates}] \code{Set} of output \code{Predicates}.
 \end{labeling}
-
-The \code{Tag} class itself is abstract. This means that an object may not be directly instantiated as a \code{Tag}, but must be instantiated as one of its subclasses. This makes sense, since a tag \emph{must} be one of the three types: rule, recommendation or fact. This is an example of using the abstraction principle of OOP.
-
-All of these classes were placed inside the \code{tags} package. A UML diagram of the \code{tags} package can be seen in \autoref{uml_tags} of the Appendix.
 
 \subsection{Knowledge Node Network}
 
-All code relating directly to the KNN was placed in the \code{knn} package of the project. A UML diagram of the \code{knn} package can be seen in \autoref{uml_knn} of the Appendix.
+All code relating directly to the KNN was placed in the \code{knn} package of the project. A UML diagram of the important classes in the \code{knn} package can be seen in \cref{fig:uml_knn}.
 
-The KNN layer is based around the \code{KnowledgeNodeNetwork} Java class. This class has the following fields:
+\begin{figure}[!htb]
+	\includegraphics[width=\columnwidth]{figures/uml_knn.pdf}
+	\caption{UML diagram of the major classes in the \code{knn} package.}
+	\label{fig:uml_knn}
+\end{figure}
+
+The KNN layer is based around the \code{KnowledgeNodeNetwork} interface. Its implementation, \code{KnowledgeNodeNetworkImpl}, has the following fields:
 
 \begin{labeling}{\code{activeTags}}
-	\item[\code{mapKN}] One-to-one \code{HashMap} of input \code{Tags} to associated \code{KnowledgeNodes}.
-	\item[\code{activeTags}] \code{HashSet} of active \code{Tags}, corresponding to input \code{Tags} of fired \code{KnowledgeNodes}.
+	\item[\code{mapKN}] One-to-one \code{HashMap} of input \code{Tag}s to associated \code{KnowledgeNode}s.
+	\item[\code{activeTags}] \code{HashSet} of active \code{Tag}s, corresponding to input \code{Tag}s of fired \code{KnowledgeNode}s.
 \end{labeling}
 
 The choice of \code{HashSet} for the \code{activeTags} field is not arbitrary. Indeed, \code{HashSets} were used for most of the collections with variable size in the ES and KNN. The original specifications mentioned using \code{ArrayLists}, but, since there is no specific iteration order necessary for most operations in the ES and KNN, these collections were changed to \code{HashSets}. \code{HashSets} are also faster because they have $O(1)$ access time, whereas \code{ArrayLists} have $O(N)$, where $N$ is the number of elements in the collection. Access time is important because the tags in the KNN and ES are accessed often. \code{HashSets} also have the advantage of only permitting unique elements. This is useful because there should never be two copies of the same tag or the same KN in the system.
@@ -359,23 +383,25 @@ The \code{KnowledgeNode} class implements the functionality of a KN, which has t
 	\item[\code{age}] \code{int} representing the age of the \code{KnowledgeNode}.
 \end{labeling}
 
-The most important method in the \code{KnowledgeNodeNetwork} is \code{think()}, which chooses either \code{thinkForwards()}, \code{thinkBackwards()}, or \code{thinkLambda()}. These methods implement the functionality described in \ar{sec:background} and return the \code{Tags} activated as a result of thinking. At this point, \code{think()} chooses \code{thinkForwards()} by default. In the future, the choice will be determined by META (see \autoref{sec:plan}).
+The most important methods in the \code{KnowledgeNodeNetwork} are the ones relating to searching and thinking, as described in \cref{sec:background}. The search methods are \code{directSearch()}, \code{forwardSearch()}, \code{backwardSearch()} and \code{lambdaSearch()}. The \code{directSearch()} method takes as input the \code{Tag} to activate and returns the \code{Set} of \code{Tag}s activated as a result of exciting the \code{KnowledgeNode} associated with the input \code{Tag}. Note that the input \code{Tag} itself is not returned.
+Similarly, the other search methods take a \code{Set} of \code{Tag}s as input and return the \code{Set} of \code{Tag}s activated as a result of searching. The other search methods also take a \code{ply} parameter specifying the depth of the search. If \code{ply} is 0, the search continues until quiescence, i.e., until no \code{Tag}s are activated during a search cycle.
 
-Without a parameter, the \code{think()} method runs to natural quiescence. There is also an overloaded version of \code{think()} that takes an \code{int} \code{numberOfCycles} as a parameter. This parameter represents the thinking effort described earlier. Similarly, \code{thinkForwards()}, \code{thinkBackwards()}, and \code{thinkLambda()} all have overloaded versions with \code{numberOfCycles} as a parameter. This is a good example of the polymorphism principle of OOP.
+For each of the search methods, there is an associated searcher class, i.e., \code{DirectSearcher}, \code{ForwardSearcher}, \code{BackwardSearcher} and \code{LambdaSearcher}. Delegating the search behavior to different classes allows for modularity and easy unit testing. Re-use of these classes was also taken advantage of, with \code{ForwardSearcher} using \code{DirectSearcher}, and \code{LambdaSearcher} using \code{ForwardSearcher} and \code{BackwardSearcher}, as shown in \cref{fig:uml_knn}. The \code{ForwardSearcher}, \code{BackwardSearcher} and \code{LambdaSearcher} also extend a \code{Searcher} abstract class, which handles some common functionality, i.e., searching until quiescence when the \code{ply} is 0.
 
-
-Currently, only the \code{thinkForwards()} method is fully completed. The version that runs until natural quiescence can be seen in \autoref{lst:thinkForwards}. The version with a fixed number of thinking cycles can be seen in \autoref{lst:thinkForwardsThreshold}. One can see that both \code{thinkForwards()} methods call \code{forwardThinkCycle()}, which can be seen in \autoref{lst:forwardThinkCycle}. This is where \code{Tags} can become active (line 9), being added into \code{activeTags}.
-
-One can see that the \code{forwardThinkCycle()} method calls \code{excite()} (line 5) on a \code{KnowledgeNode}, which returns the \code{Tags} activated as a result of excitation. The method can be seen in \autoref{lst:excite}. This, in turn, may call \code{fire()} on line 5 to fire the \code{KnowledgeNode}, activate its output tags, and return the \code{Tags} activated as a result of firing. The method can be seen in \autoref{lst:fire}. All these methods were made \code{private}, since they should never be accessed outside the KNN. This is a good example of the encapsulation principle of OOP.
-
-
-A simple version of \code{thinkBackwards()} was also completed, activating a KN only if all its output \code{Tags} are active.
+Similarly, there are methods relating to thinking, i.e, \code{forwardThink()}, \code{backwardThink()} and \code{lambdaThink()}. These behave in the same way as their searching counterparts, except that they take as input all the currently active tags in the KNN, instead of user-provided input.
+\todo{Talk about age implementation, design decisions.}
 
 \subsection{Expert System}
 
-All code relating directly to the ES was placed in the \code{es} package of the project. A UML diagram of the \code{es} package can be seen in \autoref{uml_es} of the Appendix.
+All code relating directly to the ES was placed in the \code{es} package of the project. A UML diagram of the \code{es} package can be seen in \cref{fig:uml_es}.
 
-The ES layer is based around the \code{ExpertSystem} Java class. This class has the following fields:
+\begin{figure}[!htb]
+	\includegraphics[width=\columnwidth]{figures/uml_es.pdf}
+	\caption{UML diagram of the major classes in the \code{es} package.}
+	\label{fig:uml_es}
+\end{figure}
+
+The ES layer is based around the \code{ExpertSystem} interface. Its implementation, \code{ExpertSystemImpl}, has the following important fields:
 
 \begin{labeling}{\code{recommendations}}
 	\item[\code{readyRules}] \code{HashSet} of \code{Rules} that have not been activated yet.
@@ -384,61 +410,80 @@ The ES layer is based around the \code{ExpertSystem} Java class. This class has 
 	\item[\code{recommendations}] \code{HashSet} of active \code{Recommendations}.
 \end{labeling}
 
-The most important method in the \code{ExpertSystem} is \code{think()}, which implements the functionality described in \ar{sec:background}. Without a parameter, the \code{think()} method runs to natural quiescence. This can be seen in \autoref{lst:think}.
+The most important method in the \code{ExpertSystem} is \code{think()}, which implements the functionality described in \cref{sec:background}. It has the following parameters:
 
-There is also an overloaded version of \code{think()} that functions similarly to that of the \code{KnowledgeNodeNetwork}. This can be seen in \autoref{lst:thinkThreshold}. Both variants of \code{think()} return the \code{Set} of \code{Recommendations} that become active as a result of thinking, which is passed on to the META. Both versions also call a method named \code{thinkCycle()} which represents a single cycle of thinking. The code for this method can be seen in \autoref{lst:thinkCycle}.
+\begin{labeling}{\code{generateRule}}
+	\item[\code{ply}] The amount of thinking cycles to execute.
+	\item[\code{generateRule}] If \code{true}, generates a \code{Rule} based on the active \code{Fact}s and the ones activated as a result of thinking.
+\end{labeling}
 
+The \code{think()} method has an associated \code{Thinker} class, whose sole purpose is to execute thinking cycles.
 
-Finally, we see in the \code{thinkCycle()} method a call to the \code{addTag()} method on line 21, which adds a \code{Tag} to the ES depending on its type. The code can be seen in \autoref{lst:addTag}. The method is \code{public} because it could be used by a user of the ES to set the initial data structures. It returns \code{true} if the \code{Tag} is added successfully. The \code{addRule()}, \code{addFact()}, and \code{addRecommendation()} methods simply add a \code{Tag} to the \code{readyRules}, \code{facts}, or \code{recommendations} \code{Sets}, respectively, and return \code{true} if the ES did not already contain the \code{Tag} to be added.
+\subsection{Visualization}
+The Java graph visualization library GraphStream was used to visualize the KNN and the process of searching or thinking through it. The graphing code created was placed in the \code{graphing} package. A UML diagram of the important classes in the \code{graphing} package can be seen in \cref{fig:uml_graphing}. A legend for reading the produced graph can be seen in \cref{fig:knn_graph_legend}.
+
+\begin{figure}[!htb]
+	\includegraphics[width=\columnwidth]{figures/uml_graphing.pdf}
+	{UML diagram of the important classes in the \code{graphing} package.}
+	\label{fig:uml_graphing}
+\end{figure}
 
 \begin{figure*}[!htb]
-\includegraphics[width=\textwidth]{figures/testKNN.pdf}
-\caption[Setup for the \code{testKNN()} method.]
-{Initial setup for the \code{testKNN()} method.}
-\label{testKNN}
+	\includegraphics[width=\textwidth]{figures/knn_graph_legend.pdf}
+	\caption{Legend for reading the graph produced by \code{KnnGraphVisualizer}.}
+	\label{fig:knn_graph_legend}
+\end{figure*}
+
+\subsection{Documentation}
+Extensive documentation was created in Javadoc\footnote{The Javadoc can be found here: \url{http://seanstappas.me/prometheus-ai/}}. Instructions are also provided on the README of the GitHub repository hosting the code\footnote{The GitHub repository can be found here: \url{https://github.com/seanstappas/prometheus-ai/}}.
+
+\begin{figure*}[!htb]
+	\includegraphics[width=\textwidth]{figures/testKNN.pdf}
+	\caption[Setup for the \code{testKNN()} method.]
+	{Initial setup for the \code{testKNN()} method.}
+	\label{testKNN}
 \end{figure*}
 
 \begin{table*}[!htb]
-\large
-\centering
-\caption[Test setup for \code{testES()}.]
-{Test setup for \code{testES()}. Middle activation steps omitted.}
-\begin{tabular}{c | c | c | c | c} 
-	\textbf{State} & \textbf{Ready Rules} & \textbf{Active Rules} & \specialcell{\textbf{Active} \\ \textbf{Facts}} & \specialcell{\textbf{Active} \\ \textbf{Recommendations}}  \\ \hline
-	
-	Initial & \specialcell{$(A)(B)\rightarrow(D)$ \\ $(D)(B)\rightarrow(E)$ \\ $(D)(E)\rightarrow(F)$\\ $(G)(A)\rightarrow(H)$ \\ $(E)(F)\rightarrow(\#Z)$} &  & $(A),(B)$ & $(\#X),(\#Y)$ \\ \hline
-	
-	$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\ \hline
-	
-	Final & $(G)(A)\rightarrow(H)$ & \specialcell{$(A)(B)\rightarrow(D)$ \\ $(D)(B)\rightarrow(E)$ \\ $(D)(E)\rightarrow(F)$ \\ $(E)(F)\rightarrow(\#Z)$} & \specialcell{$(A),(B),$ \\ $(D),(E)$ \\ $(F)$} & $(\#X),(\#Y),(\#Z)$		
-\end{tabular}
-\label{testES}
+	\large
+	\centering
+	\caption[Test setup for \code{testES()}.]
+	{Test setup for \code{testES()}. Middle activation steps omitted.}
+	\begin{tabular}{c | c | c | c | c} 
+		\textbf{State} & \textbf{Ready Rules} & \textbf{Active Rules} & \specialcell{\textbf{Active} \\ \textbf{Facts}} & \specialcell{\textbf{Active} \\ \textbf{Recommendations}}  \\ \hline
+		
+		Initial & \specialcell{$(A)(B)\rightarrow(D)$ \\ $(D)(B)\rightarrow(E)$ \\ $(D)(E)\rightarrow(F)$\\ $(G)(A)\rightarrow(H)$ \\ $(E)(F)\rightarrow(\#Z)$} &  & $(A),(B)$ & $(\#X),(\#Y)$ \\ \hline
+		
+		$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\ \hline
+		
+		Final & $(G)(A)\rightarrow(H)$ & \specialcell{$(A)(B)\rightarrow(D)$ \\ $(D)(B)\rightarrow(E)$ \\ $(D)(E)\rightarrow(F)$ \\ $(E)(F)\rightarrow(\#Z)$} & \specialcell{$(A),(B),$ \\ $(D),(E)$ \\ $(F)$} & $(\#X),(\#Y),(\#Z)$		
+	\end{tabular}
+	\label{testES}
 \end{table*}
 
 \begin{table*}[!htb]
-\large
-\centering
-\caption{Test setup and activation for the ES portion of \code{testKNNandES()}.}
-\begin{tabular}{c | c | c | c | c} 
-	\textbf{State} & \textbf{Ready Rules} & \textbf{Active Rules} & \specialcell{\textbf{Active} \\ \textbf{Facts}} & \specialcell{\textbf{Active} \\ \textbf{Recommendations}}  \\ \hline
-	Initial
-	&$(H)(I)(J)\rightarrow(\#Z)$
-	& 
-	& \specialcell{$(B),(C),(D)$ \\ $(E),(F),(G)$ \\ $(H),(I),(J)$}
-	& \\ \hline
-	
-	Final
-	&
-	& $(H)(I)(J)\rightarrow(\#Z)$
-	& \specialcell{$(B),(C),(D)$ \\ $(E),(F),(G)$ \\ $(H),(I),(J)$}
-	& $(\#Z)$
-\end{tabular}
-\label{testKNNandES}
+	\large
+	\centering
+	\caption{Test setup and activation for the ES portion of \code{testKNNandES()}.}
+	\begin{tabular}{c | c | c | c | c} 
+		\textbf{State} & \textbf{Ready Rules} & \textbf{Active Rules} & \specialcell{\textbf{Active} \\ \textbf{Facts}} & \specialcell{\textbf{Active} \\ \textbf{Recommendations}}  \\ \hline
+		Initial
+		&$(H)(I)(J)\rightarrow(\#Z)$
+		& 
+		& \specialcell{$(B),(C),(D)$ \\ $(E),(F),(G)$ \\ $(H),(I),(J)$}
+		& \\ \hline
+		
+		Final
+		&
+		& $(H)(I)(J)\rightarrow(\#Z)$
+		& \specialcell{$(B),(C),(D)$ \\ $(E),(F),(G)$ \\ $(H),(I),(J)$}
+		& $(\#Z)$
+	\end{tabular}
+	\label{testKNNandES}
 \end{table*}
 
-\subsection{Testing}
-
-\todo{Remake these old tests. Name them 'simple'.}
+\section{Results \& Tests} \label{sec:results}
+\todo{BDD with Mockito + TestNG + Guice}
 All tests on the system were conducted using the TestNG framework in Java, which provides a simple and intuitive way to create assertions in tests. These tests were placed in the \code{test} package of the project. A UML diagram of the \code{test} package can be seen in \autoref{uml_test} of the Appendix. The primary methods of interest in the test package are \code{testKNN()}, \code{testES()}, and \code{testKNNandES()}.
 
 The test setup for the \code{testKNN()} method can be seen in \autoref{testKNN}. It creates a KNN, with every node having a \code{threshold} value of 1 to simplify the activation process. The system starts out with $A$ as the only active \code{Tag}, and \code{testKNN()} will make the KNN \code{think()} until natural quiescence. It is therefore expected that all the \code{Tags} shown in \autoref{testKNN} will become active by the end of the thinking process. The initial and final states are both asserted with TestNG in \code{testKNN()}, with positive results.
@@ -446,15 +491,6 @@ The test setup for the \code{testKNN()} method can be seen in \autoref{testKNN}.
 The test setup for the \code{testES()} method can be seen in \autoref{testES}. The columns from left to right (ignoring State) correspond to the elements in \code{readyRules}, \code{activeRules}, \code{facts}, and \code{recommendations}, respectively. The first row corresponds to the initial setup of the ES, and the last row corresponds to the expected final state. Both the initial and final states are asserted with TestNG in \code{testES()}, with positive results.
 
 The \code{testKNNandES()} method has the same setup as \code{testKNN()} in \autoref{testKNN}, except the output active Tags from the KNN are passed on to the ES. The resulting setup and activation in the ES can be seen in \autoref{testKNNandES}. The initial and final states were also tested with TestNG with positive results.
-
-\subsection{Documentation}
-
- Extensive documentation was created in Javadoc\footnote{The Javadoc can be found here: \url{http://cs.mcgill.ca/~sstapp/prometheus/index.html}}. UML diagrams were also created for each package in the source code to accompany the documentation (see \autoref{sec:uml}).
-
-
-\section{Results \& Tests}
-\label{sec:results}
-\todo{BDD with Mockito + TestNG + Guice}
 
 \section{Impact on Society and the Environment}
 \label{sec:impact}
