@@ -19,6 +19,7 @@
 \usepackage[super]{nth}
 \usepackage{todonotes}
 \usepackage[noabbrev,capitalize,nameinlink]{cleveref}
+\usepackage{mathtools}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -169,7 +170,7 @@ Ultimately, the classification and localization of objects will produce abstract
 
 \subsection{Knowledge Node Network}
 
-The KNN layer is the analog to memory in the human brain. It takes in the tags provided by the NN and outputs tags based on its knowledge of the environment. The KNN consists of interconnected Knowledge Nodes (KNs), which are abstract structures representing memories and their connections to other memories. A simple model of a Knowledge Node (KN) can be seen in \ar{kn}.
+The KNN layer is the analog to memory in the human brain. It takes in the tags provided by the NN and outputs tags based on its knowledge of the environment. It consists of interconnected Knowledge Nodes (KNs), which are abstract structures representing memories and their connections to other memories. A simple model of a Knowledge Node (KN) can be seen in \ar{kn}.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/knowledge_node.pdf}
@@ -243,7 +244,7 @@ The ES layer is a basic logic reasoner. It is not aware of its current reality o
 Facts are simple calculus predicates showing that something is true. They take the form of a predicate, as shown in \cref{eq:fact}, where $P$ is the predicate name and each $A_i$ is an argument.
 
 \begin{equation} \label{eq:fact}
-	P(A_1, \ldots, A_n)
+	Fact \coloneqq P(A_1, \ldots, A_n)
 \end{equation}
 
 \cref{table:fact_predicates} shows some examples fact with simple arguments and their meanings.
@@ -272,7 +273,7 @@ Recommendations represent suggestions for actions to be taken by a robot. They t
 Rules are many-to-many structures with facts as inputs and tags as outputs. This can be seen in \autoref{eq:rule}, where $m \geq 1$ and $n \geq 1$, i.e., there must be at least one input fact and one output tag. Each output tag can either be a fact or a recommendation. When all the input facts become active, the output tags become active and the rule itself is said to be active. In this way, a rule can represent a logical AND of all its input facts.
 
 \begin{equation} \label{eq:rule}
-	Fact_1, \ldots, Fact_m \rightarrow Tag_1, \ldots, Tag_n
+	Rule \coloneqq Fact_1 \ldots Fact_m \rightarrow Tag_1 \ldots Tag_n
 \end{equation}
 
 The runtime of the ES consists of the following general steps \cite{vybihal-expert}:
