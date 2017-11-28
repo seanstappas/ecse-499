@@ -68,25 +68,25 @@
 						\centering
 						\begin{subfigure}[!htb]{0.49\columnwidth}
 							\centering
-							\includegraphics[height=2.5in]{figures/direct_search.pdf}
+							\includegraphics[height=2.8in]{figures/direct_search.pdf}
 							\caption{Direct searching.}
 						\end{subfigure}
 						\begin{subfigure}[!htb]{0.49\columnwidth}
 							\centering
-							\includegraphics[height=2.5in]{figures/forwards_thinking.pdf}
+							\includegraphics[height=2.8in]{figures/forward_search.pdf}
 							\caption{Forward searching/thinking.}
 							\label{think_forwards}
 						\end{subfigure}
 						\bigskip
 						\begin{subfigure}[!htb]{0.49\columnwidth}
 							\centering
-							\includegraphics[height=2.5in]{figures/backwards_thinking.pdf}
+							\includegraphics[height=2.8in]{figures/backward_search.pdf}
 							\caption{Backward searching/thinking.}
 							\label{think_backwards}
 						\end{subfigure}
 						\begin{subfigure}[!htb]{0.49\columnwidth}
 							\centering
-							\includegraphics[height=2.5in]{figures/lambda_thinking.pdf}
+							\includegraphics[height=2.8in]{figures/lambda_search.pdf}
 							\caption{Lambda searching/thinking.}
 							\label{think_lambda}
 						\end{subfigure}
@@ -100,16 +100,24 @@
 							\item Unaware of context.
 						\end{itemize}
 					\end{itemize}
+				
+					\begin{equation} \label{eq:fact}
+						P(A_1, \ldots, A_n)
+					\end{equation}
 					
 					\begin{table}[!htb]
 						\centering
-						\caption{Fact predicates in the ES.}
+						\caption{Examples of facts in the ES.}
 						\begin{tabular}{r | l}
 							\textbf{Fact} & \textbf{Meaning} \\ \hline
-							$(A)$ & $A$ is true or active.\\
-							$(A = 1)$ & $A$ is equal to 1. \\
-							$(A > 1)$ & $A$ is greater than 1. \\
-							$(A \ ?)$ & $A$ can take any value.
+							$P(x)$ & $x$ is true or active.\\
+							$P(x = 1)$ & $x$ is equal to 1. \\
+							$P(x \ != 1)$ & $x$ is not equal to 1. \\
+							$P(x > 1)$ & $x$ is greater than 1. \\
+							$P(x < 1)$ & $x$ is less than 1. \\
+							$P(\&x)$ & $x$ can take any integer value. \\
+							$P(*)$ & All arguments can take any value. \\
+							$P(?)$ & One argument can take any value. \\
 						\end{tabular}
 						\label{table:fact_predicates}
 					\end{table}
@@ -126,26 +134,28 @@
 					\end{itemize}
 				
 				\end{block}
-				\begin{block}{Problem}
-				\begin{itemize}
-					\item Design and implement the ES and KNN in Java.
-					\begin{itemize}
-						\item Create an initial design.
-						\item Build a code skeleton.
-						\item Implement integration and unit tests.
-					\end{itemize}
-				
-					\item Supervise undergraduate students working on Prometheus.
-					\begin{itemize}
-						\item Provide resources.
-						\item Review code.
-					\end{itemize}
-				\end{itemize}
-				\end{block}
 			}
 			\end{column}
 			\begin{column}{.34\textwidth}
 				\parbox[t][\columnheight]{\textwidth}{
+				
+				\begin{block}{Problem}
+					\begin{itemize}
+						\item Design and implement the ES and KNN in Java.
+						\begin{itemize}
+							\item Create an initial design.
+							\item Build a code skeleton.
+							\item Implement integration and unit tests.
+						\end{itemize}
+						
+						\item Supervise undergraduate students working on Prometheus.
+						\begin{itemize}
+							\item Provide resources.
+							\item Review code.
+						\end{itemize}
+					\end{itemize}
+				\end{block}
+					
 				\begin{block}{Design \& Implementation}
 					\begin{itemize}
 						\item Dependencies modeled using Google Guice.
@@ -179,21 +189,26 @@
 						\end{subfigure}
 						\begin{subfigure}[b]{0.49\textwidth}
 							\centering
-							\includegraphics[height=1.5in]{figures/uml_es.pdf}
-							\caption{ES UML diagram.}
-						\end{subfigure}
-						\bigskip
-						\begin{subfigure}[b]{0.49\textwidth}
-							\centering
 							\includegraphics[height=1.5in]{figures/uml_tags.pdf}
 							\caption{Tags UML diagram.}
 						\end{subfigure}
-						\begin{subfigure}[b]{0.49\textwidth}
+						\par\bigskip
+						\begin{subfigure}[b]{0.32\textwidth}
+							\centering
+							\includegraphics[height=1.5in]{figures/uml_es.pdf}
+							\caption{ES UML diagram.}
+						\end{subfigure}
+						\begin{subfigure}[b]{0.32\textwidth}
 							\centering
 							\includegraphics[height=1.5in]{figures/uml_knn.pdf}
 							\caption{KNN UML diagram.}
 						\end{subfigure}
-						\caption{UML diagrams of the major modules in Prometheus.}
+						\begin{subfigure}[b]{0.32\textwidth}
+							\centering
+							\includegraphics[height=1.5in]{figures/uml_graphing.pdf}
+							\caption{Graphing UML diagram.}
+						\end{subfigure}
+							\caption{UML diagrams of the major modules in Prometheus.}
 					\end{figure}
 				
 				
@@ -205,35 +220,6 @@
 						{Legend for the visualization of the KNN.}
 					\end{figure}
 					
-%					\begin{figure}[!htb]
-%						\centering
-%						%			\begin{subfigure}[!htb]{0.3\textwidth}
-%						%				\centering
-%						%				\includegraphics[width=\textwidth]{figures/prometheus_uml.pdf}
-%						%				\caption
-%						%				{Prometheus package.}
-%						%			\end{subfigure}
-%						%			~
-%						\begin{subfigure}[!htb]{0.4\columnwidth}
-%							\centering
-%							\includegraphics[width=\columnwidth]{figures/es_uml.pdf}
-%							\caption
-%							{ES package.}
-%						\end{subfigure}
-%						\begin{subfigure}[!htb]{0.4\columnwidth}
-%							\centering
-%							\includegraphics[width=\columnwidth]{figures/knn_uml.pdf}
-%							\caption
-%							{KNN package.}
-%						\end{subfigure}
-%						\caption{UML diagrams for the major modules.}
-%					\end{figure}
-					
-%					\begin{figure}[!htb]
-%						\centering
-%						\includegraphics[width=0.3\columnwidth]{figures/knn_graph_svg.pdf}
-%						\caption{Visualization of the KNN. Small nodes are Tags, big nodes are Knowledge Nodes (KNs). Red nodes represent active Tags or fired KNs. For non-active Tags, Facts are purple, Rules are blue and Recommendations are orange.}
-%					\end{figure}
 				\end{block}
 				\begin{block}{Results \& Tests}
 					\begin{itemize}

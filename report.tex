@@ -131,11 +131,11 @@ The following abbreviations will be used throughout the report:
 \section{Introduction} \label{sec:intro}
 % In this section you should introduce (at a high level) the overall theme of the project, and state clearly what are the goals you are trying to achieve.  This section should also clearly convey why this project is important, what is the potential impact (applications, etc).
 
-The goal of the Prometheus project is to create an artificial intelligence system to control and coordinate multiple robots. All the thinking and decision-making is done by Prometheus, which collects data from all the robots' sensors.
+Prometheus is an artificial intelligence system designed to control and coordinate multiple robots. All the thinking and decision-making is done by the system, which collects data from all the robots' sensors.
 
-Applications for this type of system include robots in hazardous environments, such as in outer space (Mars, Moon, etc.), in nuclear plants after a disaster, and in military zones.  The system could ideally learn from this data in a given environment and apply its learning to new environments.
+Applications for this type of system include robots in hazardous environments, such as in outer space (Mars, Moon, etc.), in nuclear plants after a disaster, and in military zones.  The system could theoretically learn from this data in a given environment and apply its learning to new environments.
 
-The system is loosely inspired from the structure of the human brain, and is composed of the following four layers \cite{vybihal-model}: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES), and the Meta Reasoner (META), which can be seen in \autoref{model}.
+The architecture of Prometheus is loosely inspired from the structure of the human brain, and is composed of the following four layers \cite{vybihal-model}: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES), and the Meta Reasoner (META), which can be seen in \autoref{model}.
 
 \begin{figure*}[!htb]
 	\includegraphics[width=\textwidth]{figures/ai_model.pdf}
@@ -145,7 +145,7 @@ The system is loosely inspired from the structure of the human brain, and is com
 
 The theory needed to understand these four layers will be given in \autoref{sec:background}. The assigned task will then be described in \autoref{sec:problem}. Design criteria will be discussed in \autoref{sec:design}. The description of the work done this semester can be found in \autoref{sec:implementation}, and the results and tests will be discussed in \autoref{sec:results}. Finally, the possible future impact of this project on society and the environment will be explored in \autoref{sec:impact}.
 
-The scope of this thesis is primarily to implement the KNN and ES in Prometheus. Therefore, more detail will be given for these layers.
+The scope of this thesis is primarily to implement the KNN and ES layers of Prometheus. Therefore, more detail will be given for these layers.
 
 \section{Background} \label{sec:background}
 % In this section you should summarize the theory and background that you had to learn, and that you believe are necessary for the reader to understand the rest of the report.
@@ -169,12 +169,12 @@ Ultimately, the classification and localization of objects will produce abstract
 
 \subsection{Knowledge Node Network}
 
-The KNN layer represents memory in the human brain. It takes in the tags provided by the NN and outputs tags based on its knowledge of the environment. The KNN is based around interconnected Knowledge Nodes (KNs), which are abstract structures representing memories and their connections to other memories. A simple model of a Knowledge Node (KN) can be seen in \ar{kn}.
+The KNN layer is the analog to memory in the human brain. It takes in the tags provided by the NN and outputs tags based on its knowledge of the environment. The KNN consists of interconnected Knowledge Nodes (KNs), which are abstract structures representing memories and their connections to other memories. A simple model of a Knowledge Node (KN) can be seen in \ar{kn}.
 
 \begin{figure}[!htb]
-	\includegraphics[width=\columnwidth]{figures/kn.pdf}
+	\includegraphics[width=\columnwidth]{figures/knowledge_node.pdf}
 	\caption[High-level model of the Knowledge Node of the KNN.]
-	{High-level model of the Knowledge Node (KN) of the KNN \cite{vybihal-knowledge}.}
+	{High-level model of the Knowledge Node (KN) of the KNN.}
 	\label{kn}
 \end{figure}
 
@@ -207,7 +207,7 @@ Direct searching is a simple lookup of the desired Tag and excitation of the ass
 Forward thinking is depicted in \autoref{think_forwards}. Firing a KN can cause forward activation of more KNs, hence the ``forwards'' naming.
 
 \begin{figure}[!htb]
-	\includegraphics[width=\columnwidth]{figures/forwards_thinking.pdf}
+	\includegraphics[width=\columnwidth]{figures/forward_search.pdf}
 	\caption{Thinking forwards in the KNN.}
 	\label{think_forwards}
 \end{figure}
@@ -215,7 +215,7 @@ Forward thinking is depicted in \autoref{think_forwards}. Firing a KN can cause 
 Thinking backward starts at the output tags of KNs, and works backwards, as can seen in \autoref{think_backwards}. In its simplest form, it checks output tags of KNs and, if all of them are active, the input tag must be active as well, so that KN is fired.
 
 \begin{figure}[!htb]
-	\includegraphics[width=\columnwidth]{figures/backwards_thinking.pdf}
+	\includegraphics[width=\columnwidth]{figures/backward_search.pdf}
 	\caption{Thinking backwards in the KNN.}
 	\label{think_backwards}
 \end{figure}
@@ -225,7 +225,7 @@ This type of thinking can be more difficult to implement than forwards thinking,
 Lambda thinking uses a combination of forwards and backwards, and can be seen in \autoref{think_lambda}. It is called ``lambda'' thinking because the shape of the thinking trajectory matches a Greek uppercase lambda ($\Lambda$). It first looks at output tags of KNs and propagates activation backwards, similar to backwards thinking. After a certain amount of nodes are fired, it will then start activating forwards, similar to thinking forwards. An interesting question is how far backwards should lambda thinking go before starting to cascade forwards? This relates to how general one wants to explore before searching for a more specific value.
 
 \begin{figure}[!htb]
-	\includegraphics[width=\columnwidth]{figures/lambda_thinking.pdf}
+	\includegraphics[width=\columnwidth]{figures/lambda_search.pdf}
 	\caption{Lambda thinking in the KNN.}
 	\label{think_lambda}
 \end{figure}
@@ -268,8 +268,6 @@ Facts are simple calculus predicates showing that something is true. They take t
 As a more concrete example, a fact argument can represent a certain measurement, like $distance = 5$ representing the robot's distance from a wall as measured by one of its sensors.
 
 Recommendations represent suggestions for actions to be taken by a robot. They take on the same predicate form as Facts, as shown in \cref{eq:fact}. The only difference is that it is customary to prefix the predicate with a `@' character. For example, @Turn(left) is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to actually take that action.
-
-\todo{Talk more about Isaac's additions}
 
 Rules are many-to-many structures with facts as inputs and tags as outputs. This can be seen in \autoref{eq:rule}, where $m \geq 1$ and $n \geq 1$, i.e., there must be at least one input fact and one output tag. Each output tag can either be a fact or a recommendation. When all the input facts become active, the output tags become active and the rule itself is said to be active. In this way, a rule can represent a logical AND of all its input facts.
 
@@ -419,6 +417,8 @@ The most important method in the \code{ExpertSystem} is \code{think()}, which im
 
 The \code{think()} method has an associated \code{Thinker} class, whose sole purpose is to execute thinking cycles.
 
+\todo{Talk about Fact matching, resting, teaching.}
+
 \subsection{Visualization}
 The Java graph visualization library GraphStream was used to visualize the KNN and the process of searching or thinking through it. The graphing code created was placed in the \code{graphing} package. A UML diagram of the important classes in the \code{graphing} package can be seen in \cref{fig:uml_graphing}. A legend for reading the produced graph can be seen in \cref{fig:knn_graph_legend}.
 
@@ -550,7 +550,12 @@ The main goal for next semester is to finalize the entire system, implementing m
 
 \missingfigure{UML Diagrams of ES and KNN packages}
 
-\missingfigure{Guice dependency graph diagram}
+\begin{figure}[!htb]
+	\includegraphics[width=\columnwidth]{figures/guice_graph.pdf}
+	{Guice dependency graph.}
+	\label{fig:guice_graph}
+\end{figure}
+
 
 \clearpage
 
