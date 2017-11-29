@@ -33,36 +33,23 @@
 \begin{document}
 	\begin{frame}
 		\begin{columns}
-			\begin{column}{.3\textwidth}
+			\begin{column}{.33\textwidth}
 				\parbox[t][\columnheight]{\textwidth}{
 				\begin{block}{Introduction}
-					\begin{itemize}
-						\item Prometheus
-						\begin{itemize}
-							\item Model of the human brain.
-							\item Controls multiple robots in a swarm.
-						\end{itemize}
-					\end{itemize}
+					\parbox{0.99\textwidth}{
+						\textbf{Prometheus} is an artificial intelligence system designed to control and coordinate multiple robots. All the thinking and decision-making is done by the system, which collects data from all the robots' sensors.
+						
+						The architecture of Prometheus is loosely inspired from the structure of the human brain, and is composed of the following four layers: the \textbf{Neural Network (NN)}, the \textbf{Knowledge Node Network (KNN)}, the \textbf{Expert System (ES)}, and the \textbf{Meta Reasoner (META)}.
+					
+						The \textbf{Neural Network} layer consists of a network of neurons with a structure similar to neurons in the human brain. It is the interface between the robots' sensors and the rest of the AI system.}
 				
 					\begin{figure}[!htb]
-						\includegraphics[width=0.9\textwidth]{figures/ai_model_labeled.pdf}
+						\includegraphics[width=0.99\textwidth]{figures/ai_model_labeled.pdf}
 						\caption{Prometheus AI model with labeled input and output.}
 						\label{model_labeled}
 					\end{figure}
-						
-					\begin{itemize}
-						\item Neural Netowrk (NN)
-						\begin{itemize}
-							\item Low-level signal processor.
-						\end{itemize}
-					\end{itemize}
-					
-					\begin{itemize}
-						\item Knowledge Node Network (KNN)
-						\begin{itemize}
-							\item Represents memory.
-						\end{itemize}
-					\end{itemize}
+				
+					\parbox{0.99\textwidth}{The \textbf{Knowledge Node Network} layer is the analog to memory in the human brain. It takes in the tags provided by the NN and outputs tags based on its knowledge of the environment. It consists of interconnected \textbf{Knowledge Nodes} (KNs), which are abstract structures representing memories and their connections to other memories. The KNN has four ways of searching to fire KNs and activate tags: \textbf{direct}, \textbf{forward}, \textbf{backward} and \textbf{lambda}.}
 					
 					\begin{figure}[!htb]
 						\centering
@@ -93,55 +80,40 @@
 						\caption{Methods of searching and thinking in the KNN.}
 					\end{figure}
 					
-					\begin{itemize}
-						\item Expert System (ES)
-						\begin{itemize}
-							\item Logical reasoner.
-							\item Unaware of context.
-						\end{itemize}
-					\end{itemize}
-				
-					\begin{equation} \label{eq:fact}
-						P(A_1, \ldots, A_n)
-					\end{equation}
-					
-					\begin{table}[!htb]
+					\parbox{0.99\textwidth}{The \textbf{Expert System} layer is a basic logic reasoner. It is not aware of its current reality or any context. It takes in the tags provided by the KNN and interprets them as either \textbf{facts}, \textbf{recommendations} or \textbf{rules}.
+						
+					\begin{figure}[!htb]
 						\centering
-						\caption{Examples of facts in the ES.}
-						\begin{tabular}{r | l}
-							\textbf{Fact} & \textbf{Meaning} \\ \hline
-							$P(x)$ & $x$ is true or active.\\
-							$P(x = 1)$ & $x$ is equal to 1. \\
-							$P(x \ != 1)$ & $x$ is not equal to 1. \\
-							$P(x > 1)$ & $x$ is greater than 1. \\
-							$P(x < 1)$ & $x$ is less than 1. \\
-							$P(\&x)$ & $x$ can take any integer value. \\
-							$P(*)$ & All arguments can take any value. \\
-							$P(?)$ & One argument can take any value. \\
-						\end{tabular}
-						\label{table:fact_predicates}
-					\end{table}
+						\begin{subfigure}[!htb]{0.4\columnwidth}
+							\centering
+							\includegraphics[height=2in]{figures/fact_examples.pdf}
+							\caption{Examples of simple facts in the ES.}
+						\end{subfigure}
+						\begin{subfigure}[!htb]{0.58\columnwidth}
+							\centering
+							\includegraphics[width=0.5\columnwidth]{figures/fact.pdf}
+							\caption{The form of a fact in the ES. $P$ is a predicate, and $A_i$ is an argument.}
+							
+							\vspace{2ex}
+							
+							\includegraphics[width=\columnwidth]{figures/rule.pdf}
+							\caption{The form of a rule in the ES, with $m$ input facts and $n$ output tags.}
+						\end{subfigure}
+						\caption{Facts and Rules in the ES.}
+					\end{figure}
 					
-					\begin{equation} \label{eq:rule}
-					Fact_1 \cdots Fact_m \rightarrow Tag_1 \cdots Tag_n
-					\end{equation}
 					
-					\begin{itemize}
-						\item Meta Reasoner (META)
-						\begin{itemize}
-							\item High-level decision-maker.
-						\end{itemize}
-					\end{itemize}
-				
+					The \textbf{Meta Reasoner} represents high-level reasoning in the human brain. It is aware of its environment and context, and makes decisions based on what it believes to be right.}
 				\end{block}
 			}
 			\end{column}
-			\begin{column}{.34\textwidth}
+			\begin{column}{.33\textwidth}
 				\parbox[t][\columnheight]{\textwidth}{
 				
 				\begin{block}{Problem}
-					\begin{itemize}
-						\item Design and implement the ES and KNN in Java.
+					There are two main assigned tasks over the past two semesters:
+					\begin{enumerate}
+						\item Design and implement the \textbf{Expert System} and \textbf{Knowledge Node Network} in Java.
 						\begin{itemize}
 							\item Create an initial design.
 							\item Build a code skeleton.
@@ -153,65 +125,43 @@
 							\item Provide resources.
 							\item Review code.
 						\end{itemize}
-					\end{itemize}
+					\end{enumerate}
 				\end{block}
 					
 				\begin{block}{Design \& Implementation}
-					\begin{itemize}
-						\item Dependencies modeled using Google Guice.
-						\begin{itemize}
-							\item Framework for modular dependency injection.
-							\item Allows for easily testable code.
-						\end{itemize}
-					\end{itemize}
+%					\begin{itemize}
+%						\item Dependencies modeled using Google Guice.
+%						\begin{itemize}
+%							\item Framework for modular dependency injection.
+%							\item Allows for easily testable code.
+%						\end{itemize}
+%					\end{itemize}
 					
-%					\begin{figure}[!htb]
-%						\centering
-%						\includegraphics[width=\columnwidth]{figures/guice_graph.pdf}
-%						\caption
-%						{Guice dependency graph.}
-%					\end{figure}
-					
-					\begin{itemize}
-						\item Tag object is central to the ES and KNN.
-						\begin{itemize}
-							\item Represents a unit of information.
-							\item Can be instantiated as Fact, Rule or Recommendation classes.
-						\end{itemize}
-					\end{itemize}
+					\parbox{0.99\textwidth}{The \textbf{tags} are implemented using a \code{Tag} Java class, with \code{Predicate} and \code{Rule} subclasses. The \code{Predicate} class is a superclass of the \code{Fact} and \code{Recommendation}. Searching in the \textbf{Knowledge Node Network} is implemented by \code{directSearch()}, \code{forwardSearch()}, \code{backwardSearch()} and \code{lambdaSearch()}.}
 				
 					\begin{figure}
-						\raggedleft
-						\begin{subfigure}[b]{0.49\textwidth}
-							\centering
-							\includegraphics[height=1.5in]{figures/uml_prometheus.pdf}
-							\caption{Prometheus UML diagram.}
-						\end{subfigure}
-						\begin{subfigure}[b]{0.49\textwidth}
-							\centering
-							\includegraphics[height=1.5in]{figures/uml_tags.pdf}
-							\caption{Tags UML diagram.}
-						\end{subfigure}
-						\par\bigskip
-						\begin{subfigure}[b]{0.32\textwidth}
-							\centering
-							\includegraphics[height=1.5in]{figures/uml_es.pdf}
-							\caption{ES UML diagram.}
-						\end{subfigure}
-						\begin{subfigure}[b]{0.32\textwidth}
-							\centering
-							\includegraphics[height=1.5in]{figures/uml_knn.pdf}
-							\caption{KNN UML diagram.}
-						\end{subfigure}
-						\begin{subfigure}[b]{0.32\textwidth}
-							\centering
-							\includegraphics[height=1.5in]{figures/uml_graphing.pdf}
-							\caption{Graphing UML diagram.}
-						\end{subfigure}
-							\caption{UML diagrams of the major modules in Prometheus.}
+						\centering
+						\includegraphics[width=0.99\textwidth]{figures/uml_combined_1.pdf}
+						\caption{UML diagrams of the Prometheus and Tag packages.}
+					\end{figure}			
+				
+					\parbox{0.99\textwidth}{
+					The most important method in the \textbf{Expert System} is \code{think()}, which executes thinking cycles and output recommendations.}
+				
+					\begin{figure}
+						\centering
+						\includegraphics[width=0.99\textwidth]{figures/uml_combined_3.pdf}
+						\caption{UML diagrams of Expert System and Knowledge Node Network packages.}
 					\end{figure}
 				
+					\parbox{0.99\textwidth}{
+					The Java \textbf{graph visualization} library GraphStream was used to visualize the KNN and the process of searching or thinking through it.}
 				
+					\begin{figure}
+						\centering
+						\includegraphics[width=0.55\textwidth]{figures/uml_graphing.pdf}
+						\caption{UML diagrams of the graphing package.}
+					\end{figure}
 					
 					\begin{figure}[!htb]
 						\centering
@@ -221,43 +171,26 @@
 					\end{figure}
 					
 				\end{block}
+				}
+			\end{column}
+			\begin{column}{.33\textwidth}
+				\parbox[t][\columnheight]{\textwidth}{
 				\begin{block}{Results \& Tests}
-					\begin{itemize}
-						\item Unit tests.
-						\begin{itemize}
-							\item Testing individual methods of every class in the KNN and ES.
-							\item Dependencies mocked using the Mockito library.
-							\item \SI{90}{\percent} coverage.
-						\end{itemize}
-					\end{itemize}
+					\parbox{0.99\textwidth}{
+						\textbf{Unit tests} were created using \textbf{Mockito}, \textbf{TestNG} and \textbf{TestNG}. These tests test the functionality of isolated methods. \textbf{Integration tests} were also created with \textbf{TestNG}, testing end-to-end behavior.}
 					
-					\begin{itemize}
-						\item Integration tests.
-						\begin{itemize}
-							\item Testing end-to-end behavior of the ES and KNN modules.
-							\item All unit and integration tests written with TestNG and executed with TravisCI.
-							\item \SI{95}{\percent} coverage.
-						\end{itemize}
-					\end{itemize}
-				
 					\begin{figure}[!htb]
 						\centering
 						\includegraphics[width=0.7\textwidth]{figures/testES.pdf}
 						\caption
 						{ES test setup representing simple rules and facts that must be brought to quiescence.}
 					\end{figure}
-				\end{block}
-				}
-			\end{column}
-			\begin{column}{.35\textwidth}
-				\parbox[t][\columnheight]{\textwidth}{
-				\begin{block}{Results \& Tests (continued)}
-					\begin{figure}[!htb]
-						\centering
-						\includegraphics[width=\textwidth]{figures/animal_knn.pdf}
-						\caption
-						{Elaborate test KNN network representing connections between memories of animals and their characteristics. Credit for creating the graph goes to volunteer Laurence Liang.}
-					\end{figure}
+%					\begin{figure}[!htb]
+%						\centering
+%						\includegraphics[width=\textwidth]{figures/animal_knn.pdf}
+%						\caption
+%						{Elaborate test KNN network representing connections between memories of animals and their characteristics. Credit for creating the graph goes to volunteer Laurence Liang.}
+%					\end{figure}
 					
 					\begin{itemize}
 						\item Graph visualization tests.
@@ -271,50 +204,40 @@
 					
 					\begin{figure}[!htb]
 						\centering
-						\begin{subfigure}[!htb]{0.24\columnwidth}
+						\begin{subfigure}[!htb]{0.32\columnwidth}
 							\centering
-							\includegraphics[width=\columnwidth]{figures/knn_forward_think_1.pdf}
+							\includegraphics[width=\columnwidth]{figures/knn_simple_forward_think_0.pdf}
 							\caption{Ply 1.}
 						\end{subfigure}
-						\begin{subfigure}[!htb]{0.24\columnwidth}
+						\begin{subfigure}[!htb]{0.32\columnwidth}
 							\centering
-							\includegraphics[width=\columnwidth]{figures/knn_forward_think_2.pdf}
+							\includegraphics[width=\columnwidth]{figures/knn_simple_forward_think_1.pdf}
 							\caption{Ply 2.}
 						\end{subfigure}
-						\begin{subfigure}[!htb]{0.24\columnwidth}
+						\begin{subfigure}[!htb]{0.32\columnwidth}
 							\centering
-							\includegraphics[width=\columnwidth]{figures/knn_forward_think_3.pdf}
+							\includegraphics[width=\columnwidth]{figures/knn_simple_forward_think_2.pdf}
 							\caption{Ply 3.}
-						\end{subfigure}
-						\begin{subfigure}[!htb]{0.24\columnwidth}
-							\centering
-							\includegraphics[width=\columnwidth]{figures/knn_forward_think_4.pdf}
-							\caption{Ply 4.}
 						\end{subfigure}
 						\caption{Forward thinking visualization in the KNN.}
 					\end{figure}
 					
 					\begin{figure}[!htb]
 						\centering
-						\begin{subfigure}[!htb]{0.24\columnwidth}
+						\begin{subfigure}[!htb]{0.32\columnwidth}
 							\centering
-							\includegraphics[width=\columnwidth]{figures/knn_backward_think_1.pdf}
+							\includegraphics[width=\columnwidth]{figures/knn_simple_backward_think_0.pdf}
 							\caption{Ply 1.}
 						\end{subfigure}
-						\begin{subfigure}[!htb]{0.24\columnwidth}
+						\begin{subfigure}[!htb]{0.32\columnwidth}
 							\centering
-							\includegraphics[width=\columnwidth]{figures/knn_backward_think_2.pdf}
+							\includegraphics[width=\columnwidth]{figures/knn_simple_backward_think_1.pdf}
 							\caption{Ply 2.}
 						\end{subfigure}
-						\begin{subfigure}[!htb]{0.24\columnwidth}
+						\begin{subfigure}[!htb]{0.32\columnwidth}
 							\centering
-							\includegraphics[width=\columnwidth]{figures/knn_backward_think_3.pdf}
+							\includegraphics[width=\columnwidth]{figures/knn_simple_backward_think_2.pdf}
 							\caption{Ply 3.}
-						\end{subfigure}
-						\begin{subfigure}[!htb]{0.24\columnwidth}
-							\centering
-							\includegraphics[width=\columnwidth]{figures/knn_backward_think_4.pdf}
-							\caption{Ply 4.}
 						\end{subfigure}
 						\caption{Backward thinking visualization in the KNN.}
 					\end{figure}
