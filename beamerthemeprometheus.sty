@@ -1,4 +1,4 @@
-\ProvidesPackage{beamerthemeprometheus} % this style was created by David Vilar
+\ProvidesPackage{beamerthemeprometheus}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \selectcolormodel{rgb}
@@ -8,8 +8,7 @@
 
 % custom colors
 \definecolor{i6blue}{cmyk}{1,0.305,0,0.06}
-\definecolor{i6bluedark}{rgb}{0.0156,0.2578,0.5625} 
-% http://www.colorsontheweb.com/colorwizard.asp#wizard, used start set: #0066cc
+\definecolor{i6bluedark}{rgb}{0.0156,0.2578,0.5625}
 \definecolor{i6colorscheme1}{HTML}{FFFFFF}  % Orange lines
 \definecolor{i6colorblockbg}{HTML}{4E79A7}
 \definecolor{i6colorblockfg}{HTML}{FFFFFF}
@@ -23,7 +22,7 @@
 % headline colors and fonts
 \setbeamercolor{headline}{fg=white,bg=i6colorschemeHeadline}
 \setbeamercolor{title in headline}{fg=white}
-\setbeamercolor{author in headline}{fg=lightgray}
+\setbeamercolor{author in headline}{fg=white}
 \setbeamercolor{institute in headline}{fg=lightgray}
 \setbeamercolor{logo in headline}{fg=black,bg=lightgray}
 %\setbeamercolor{separation line}{bg=i6colorscheme1}
@@ -86,29 +85,27 @@
 
   \begin{beamercolorbox}[wd=\paperwidth]{headline}
     \begin{columns}[T]
-      \begin{column}{.02\paperwidth}
+%      \begin{column}{.07\paperwidth}
+%        \begin{center}
+%          %\includegraphics[width=.6\linewidth]{logos/i6-hks44}
+%        \end{center}
+%        \vskip1ex
+%      \end{column}
+      \begin{column}{.3\paperwidth}
+      	\vspace{1.1cm}
+      	\centering
+        \usebeamercolor{author in headline}{\color{fg}\LARGE{\insertauthor}\\[1ex]}
       \end{column}
-      \begin{column}{.07\paperwidth}
-        \begin{center}
-          %\includegraphics[width=.6\linewidth]{logos/i6-hks44}
-        \end{center}
-        \vskip1ex
-      \end{column}
-      \begin{column}{.675\paperwidth}
-        \vskip5ex
-        \raggedright
-        \usebeamercolor{title in headline}{\color{fg}\textbf{\Huge{\inserttitle}}\\[1ex]}
-        \usebeamercolor{author in headline}{\color{fg}\Large{\insertauthor}\\[1ex]}
-        \usebeamercolor{institute in headline}{\color{fg}\Large{\insertinstitute}\\[1ex]}     
-      \end{column}
-      \begin{column}{.25\paperwidth}
-        \vskip0.5cm
-        \begin{center}
-          \includegraphics[width=.4\linewidth]{figures/mcgill}
-        \end{center}
-        \vskip1.5cm
-      \end{column}
-      \begin{column}{.03\paperwidth}
+	  \begin{column}{.3\paperwidth}
+	  	\vspace{1cm}
+	  	\centering
+	  	\usebeamercolor{title in headline}{\color{fg}\textbf{\Huge{\inserttitle}}\\[1ex]}
+	  \end{column}
+      \begin{column}{.3\paperwidth}
+		\vspace{0.5cm}
+        \centering
+        \includegraphics[width=.35\linewidth]{figures/mcgill_2}	
+        \vspace{0.3cm}
       \end{column}
     \end{columns}
   \end{beamercolorbox}

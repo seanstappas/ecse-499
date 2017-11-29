@@ -15,7 +15,6 @@
 \usepackage[nottoc]{tocbibind}
 \usepackage{scrextend}
 \usepackage[margin=1in]{geometry}
-\usepackage{lstautodedent}
 \usepackage[super]{nth}
 \usepackage{todonotes}
 \usepackage[noabbrev,capitalize,nameinlink]{cleveref}
@@ -24,28 +23,6 @@
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
-
-\lstset{frame=tb,
-  language=Java,
-  aboveskip=3mm,
-  belowskip=3mm,
-  showstringspaces=false,
-  columns=flexible,
-  basicstyle={\small\ttfamily},
-  keywordstyle=\color{blue},
-  commentstyle=\color{dkgreen},
-  stringstyle=\color{mauve},
-  breaklines=true,
-  breakatwhitespace=true,
-  tabsize=3,
-  basicstyle=\scriptsize\tt,
-  autodedent,
-  numbers=left,
-  numberstyle=\tiny\color{gray},
-  xleftmargin=2.5em,
-  frame=single,
-  framexleftmargin=2em
-}
 
 \def\equationautorefname~#1\null{%
   Equation~(#1)\null
@@ -268,7 +245,11 @@ Facts are simple calculus predicates showing that something is true. They take t
 
 As a more concrete example, a fact argument can represent a certain measurement, like $distance = 5$ representing the robot's distance from a wall as measured by one of its sensors.
 
-Recommendations represent suggestions for actions to be taken by a robot. They take on the same predicate form as Facts, as shown in \cref{eq:fact}. The only difference is that it is customary to prefix the predicate with a `@' character. For example, @Turn(left) is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to actually take that action.
+Recommendations represent suggestions for actions to be taken by a robot. They take on the same predicate form as Facts, as shown in \cref{eq:recommendation}. The only difference is that it is customary to prefix the predicate with a `@' character. For example, @Turn(left) is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to actually take that action.
+
+\begin{equation} \label{eq:recommendation}
+	Recommendation \coloneqq @P(A_1, \ldots, A_n)
+\end{equation}
 
 Rules are many-to-many structures with facts as inputs and tags as outputs. This can be seen in \autoref{eq:rule}, where $m \geq 1$ and $n \geq 1$, i.e., there must be at least one input fact and one output tag. Each output tag can either be a fact or a recommendation. When all the input facts become active, the output tags become active and the rule itself is said to be active. In this way, a rule can represent a logical AND of all its input facts.
 
