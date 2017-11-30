@@ -169,9 +169,6 @@ Every KN can have a belief value associated with it, representing how certain th
 
 Note that the activation of a KN and the belief value associated with it are two different concepts. Indeed, a KN may be fired even if the KNN knows that it is false. This can represent an agent ``lying'' to itself or repeating a thought process it knows to be false. This is known as ``self-deception'' in humans and it has been argued that this can be used for positive mental health \cite{taylor1989positive}.
 
-Age represents how long it has been since a KN has been excited. The idea is that, after a KN has aged a certain amount of time, that node will be discarded, similarly to how old memories are discarded in the brain \cite{aging}. The intuitive implementation of aging is to constantly increment some age value associated with every KN, and discard nodes whose age is greater than some threshold. The age would be reset to 0 when the node is excited. This would however be unnecessarily computationally intensive, requiring some kind of constant updating of every single node. A more efficient way of doing it would be to save a timestamp for every KN when it is excited, and if the KNN attempts to excite a KN whose previous timestamp value is too far into the past, that node is instead deleted.
-\todo{Move some of this to implementation?}
-
 Searching in the KNN represents an activation routine, which activates tags and potentially fires KNs. The KNN has four ways of searching: direct, forward, backward, and lambda. Thinking in the KNN is a related concept to searching. Whereas in search input tags are provided to guide the KNN, in thinking, the KNN uses its currently active tags to activate further tags. In this way, thinking is a special case of searching, where the input tags of the search are the active tags in the KNN. The KNN has three ways of thinking: forward, backward, and lambda. The version of searching or thinking to be done by the KNN is chosen by the META. 
 
 Direct searching is a simple lookup of the desired Tag and excitation of the associated KN. This represents the simplest form of thinking in the KNN and can be seen in \cref{fig:direct_search}.
@@ -212,7 +209,9 @@ This type of thinking occurs in humans when using analogical reasoning to find a
 
 All forms of thinking can continue until there are no more KNs to activate, which corresponds to natural quiescence. There can also be a fixed number of thinking cycles, which represents how much effort is being put into thinking. Indeed, in humans, thinking is done with varying degrees of effort \cite{thinking}. This number of thinking cycles also represents how deep the search will go into the knowledge node graph, and is therefore called ``ply''.
 
-The result of all forms of thinking is a collection of activated tags, which are passed on to the ES.
+Age represents how long it has been since a KN has been excited. The idea is that, after a KN has aged a certain amount of time, that node will be discarded, similarly to how old memories are discarded in the brain \cite{aging}. In any search in the KNN, ``young'' KNs (with a low age) are visited first.
+
+The result of all forms of searching and thinking is a collection of activated tags, which are passed on to the ES.
 
 \subsection{Expert System}
 
@@ -297,7 +296,16 @@ A very important consideration when designing the system is speed. Since the rob
 
 \subsection{Object Oriented Programming}
 Another important design choice is to leverage object-oriented programming (OOP) as much as possible. OOP allows extensive planning before even beginning to write code, which can identify any flaws in the initial design. It also allows the code to be very clean and reusable \cite{oop}. Since Java is the programming language chosen for the project, OOP is also the natural way to proceed.  OOP principles such as polymorphism and encapsulation will be followed closely. One important OOP principle to use is abstraction. Indeed, the system should be as abstract as possible, while still performing its desired task. For instance, the system should be general enough to perform under simulations, as well as in real-life environments. It should also ideally be able to perform in vastly different environments, with varying tasks. Encapsulation can also be very useful, since each layer of the system has unique, localized functionality that does not need to be visible from the rest of the system.
-\todo{Talk about more complex principles (Liskov, dependency inversion, injection, SOLID)}
+
+The OOP principles of SOLID \cite{martin_2009} will also be followed:
+
+\begin{description}
+	\item[Single responsibility principle:] a class should only have a single responsibility.
+	\item[Open/closed principle:] a software entity's functionality can be extended without changing its source code.
+	\item[Liskov substitution principle:] a class instance can be replaced by an instance of a subtype while remaining correct.
+	\item[Interface segregation principle:] a user of an interface should not be forced to depend on unused methods.
+	\item[Dependency inversion principle:] high-level and low-level modules should depend on abstractions.
+\end{description}
 
 \subsection{Readability \& Documentation}
 One final design criterion is that the code written should be very easy to understand. This means implementing each method and class in the most intuitive way possible and providing good documentation to support the code. This is to ensure that anyone wanting to work with the code or looking to understand how the system works has an easy time doing so.
@@ -369,7 +377,15 @@ Similarly, the other search methods take a \code{Set} of \code{Tag}s as input an
 For each of the search methods, there is an associated searcher class, i.e., \code{DirectSearcher}, \code{ForwardSearcher}, \code{BackwardSearcher} and \code{LambdaSearcher}. Delegating the search behavior to different classes allows for modularity and easy unit testing. Re-use of these classes was also taken advantage of, with \code{ForwardSearcher} using \code{DirectSearcher}, and \code{LambdaSearcher} using \code{ForwardSearcher} and \code{BackwardSearcher}, as shown in \cref{fig:uml_knn}. The \code{ForwardSearcher}, \code{BackwardSearcher} and \code{LambdaSearcher} also extend a \code{Searcher} abstract class, which handles some common functionality, i.e., searching until quiescence when the \code{ply} is 0.
 
 Similarly, there are methods relating to thinking, i.e, \code{forwardThink()}, \code{backwardThink()} and \code{lambdaThink()}. These behave in the same way as their searching counterparts, except that they take as input all the currently active tags in the KNN, instead of user-provided input.
-\todo{Talk about age implementation, design decisions.}
+
+There are two main choices for the implementation of aging of the KNs:
+
+\begin{enumerate}
+	\item Increment an age counter (from 0) for every KN every $x$ amount of time. Once a KN is excited, its age is reset to 0. If the age exceeds a certain threshold, it is discarded. The KNs can be stored in a sorted mapping from the age counter to the KNs, where a KN is simply moved to the next slot when its age is updated.
+	\item The KN's age is initialized to the current UNIX time. When a KN is about to be excited, the current UNIX time is compared to the initial one. If the difference is greater than some threshold, the KN is discarded. Otherwise, the KN's age is set to the current UNIX time. The KNs can be stored in a sorted mapping from age to KN.
+\end{enumerate}
+
+The \nth{2} method from the above was chosen for the main reason that it is computationally much simpler to update a KN upon exciting it, rather than updating multiple at a time every $x$ time interval. There is a trade-off however, since the \nth{1} method has a simpler storage mechanism, dealing with either incrementing an index or resetting an index to 0 at every age update. The \nth{2} method has to instead keep a sorted mapping from the UNIX time to the KNs. While this is more complex, it can be relatively simply implemented with a \code{TreeMap} in Java, which is what was chosen. In this way, for each search method, the youngest KNs are excited first.
 
 \subsection{Expert System}
 
@@ -397,9 +413,11 @@ The most important method in the \code{ExpertSystem} is \code{think()}, which im
 	\item[\code{generateRule}] If \code{true}, generates a \code{Rule} based on the active \code{Fact}s and the ones activated as a result of thinking.
 \end{labeling}
 
-The \code{think()} method has an associated \code{Thinker} class, whose sole purpose is to execute thinking cycles.
+The \code{think()} method has an associated \code{Thinker} class, whose sole purpose is to execute thinking cycles. 
 
-\todo{Talk about Fact matching, resting, teaching.}
+The \code{rest()} method allows the creation of new rules based on existing ones, with the associated \code{Rester} and \code{RuleMerger} classes.
+
+The \code{teach()} method parses simple ``if-then'' sentences to generate rules by using the \code{Teacher} class.
 
 \subsection{Visualization}
 The Java graph visualization library GraphStream was used to visualize the KNN and the process of searching or thinking through it. The graphing code created was placed in the \code{graphing} package. A UML diagram of the important classes in the \code{graphing} package can be seen in \cref{fig:uml_graphing}. A legend for reading the produced graph can be seen in \cref{fig:knn_graph_legend}.
@@ -419,12 +437,12 @@ The Java graph visualization library GraphStream was used to visualize the KNN a
 \subsection{Documentation}
 Extensive documentation was created in Javadoc\footnote{The Javadoc can be found here: \url{http://seanstappas.me/prometheus-ai/}}. Instructions are also provided on the README of the GitHub repository hosting the code\footnote{The GitHub repository can be found here: \url{https://github.com/seanstappas/prometheus-ai/}}.
 
-\begin{figure*}[!htb]
-	\includegraphics[width=\textwidth]{figures/testKNN.pdf}
-	\caption[Setup for the \code{testKNN()} method.]
-	{Initial setup for the \code{testKNN()} method.}
-	\label{testKNN}
-\end{figure*}
+%\begin{figure*}[!htb]
+%	\includegraphics[width=\textwidth]{figures/testKNN.pdf}
+%	\caption[Setup for the \code{testKNN()} method.]
+%	{Initial setup for the \code{testKNN()} method.}
+%	\label{testKNN}
+%\end{figure*}
 
 \begin{table*}[!htb]
 	\large
@@ -443,26 +461,26 @@ Extensive documentation was created in Javadoc\footnote{The Javadoc can be found
 	\label{testES}
 \end{table*}
 
-\begin{table*}[!htb]
-	\large
-	\centering
-	\caption{Test setup and activation for the ES portion of \code{testKNNandES()}.}
-	\begin{tabular}{c | c | c | c | c} 
-		\textbf{State} & \textbf{Ready Rules} & \textbf{Active Rules} & \specialcell{\textbf{Active} \\ \textbf{Facts}} & \specialcell{\textbf{Active} \\ \textbf{Recommendations}}  \\ \hline
-		Initial
-		&$(H)(I)(J)\rightarrow(\#Z)$
-		& 
-		& \specialcell{$(B),(C),(D)$ \\ $(E),(F),(G)$ \\ $(H),(I),(J)$}
-		& \\ \hline
-		
-		Final
-		&
-		& $(H)(I)(J)\rightarrow(\#Z)$
-		& \specialcell{$(B),(C),(D)$ \\ $(E),(F),(G)$ \\ $(H),(I),(J)$}
-		& $(\#Z)$
-	\end{tabular}
-	\label{testKNNandES}
-\end{table*}
+%\begin{table*}[!htb]
+%	\large
+%	\centering
+%	\caption{Test setup and activation for the ES portion of \code{testKNNandES()}.}
+%	\begin{tabular}{c | c | c | c | c} 
+%		\textbf{State} & \textbf{Ready Rules} & \textbf{Active Rules} & \specialcell{\textbf{Active} \\ \textbf{Facts}} & \specialcell{\textbf{Active} \\ \textbf{Recommendations}}  \\ \hline
+%		Initial
+%		&$(H)(I)(J)\rightarrow(\#Z)$
+%		& 
+%		& \specialcell{$(B),(C),(D)$ \\ $(E),(F),(G)$ \\ $(H),(I),(J)$}
+%		& \\ \hline
+%		
+%		Final
+%		&
+%		& $(H)(I)(J)\rightarrow(\#Z)$
+%		& \specialcell{$(B),(C),(D)$ \\ $(E),(F),(G)$ \\ $(H),(I),(J)$}
+%		& $(\#Z)$
+%	\end{tabular}
+%	\label{testKNNandES}
+%\end{table*}
 
 \section{Results \& Tests} \label{sec:results}
 \todo{BDD with Mockito + TestNG + Guice}
@@ -471,8 +489,6 @@ All tests on the system were conducted using the TestNG framework in Java, which
 The test setup for the \code{testKNN()} method can be seen in \autoref{testKNN}. It creates a KNN, with every node having a \code{threshold} value of 1 to simplify the activation process. The system starts out with $A$ as the only active \code{Tag}, and \code{testKNN()} will make the KNN \code{think()} until natural quiescence. It is therefore expected that all the \code{Tags} shown in \autoref{testKNN} will become active by the end of the thinking process. The initial and final states are both asserted with TestNG in \code{testKNN()}, with positive results.
 
 The test setup for the \code{testES()} method can be seen in \autoref{testES}. The columns from left to right (ignoring State) correspond to the elements in \code{readyRules}, \code{activeRules}, \code{facts}, and \code{recommendations}, respectively. The first row corresponds to the initial setup of the ES, and the last row corresponds to the expected final state. Both the initial and final states are asserted with TestNG in \code{testES()}, with positive results.
-
-The \code{testKNNandES()} method has the same setup as \code{testKNN()} in \autoref{testKNN}, except the output active Tags from the KNN are passed on to the ES. The resulting setup and activation in the ES can be seen in \autoref{testKNNandES}. The initial and final states were also tested with TestNG with positive results.
 
 \section{Impact on Society and the Environment}
 \label{sec:impact}
@@ -509,9 +525,9 @@ The system could also be used to further space exploration, with an AI controlli
 \section{Conclusion}
 % Use this section to summarize what was accomplished in this semester, provide a summary of the next steps and share any insight you have learned.
 
-This semester, prototypes of the Expert System (ES) and Knowledge Node Network (KNN) layers of the Prometheus AI model were completed in Java based on personal design criteria and feedback from the supervisor. The design of the prototypes has required a great deal of thought and planning to ensure efficiency and proper behaviour. These prototypes were tested using the TestNG Java framework with positive results, and extensive Javadoc was produced. Possible impacts on the environment and society were also discussed.
+The Expert System (ES) and Knowledge Node Network (KNN) layers of the Prometheus AI model were completed in Java based on design criteria and feedback from the supervisor. The design of the prototypes has required a great deal of thought and planning to ensure efficiency and proper behaviour. These prototypes were tested using the TestNG Java framework with positive results, and extensive Javadoc was produced. Possible impacts on the environment and society were also discussed.
 
-The main goal for next semester is to finalize the entire system, implementing more complex features that were omitted for this prototype stage. This will also require proper integration between the work done in this report (KNN and ES), and outside this report (NN and META). Finally, the entire system will have to be tested, in simulation and with physical robots.
+Possible future work would include finalizing the entire system by building the Neural Network (NN) and Meta Reasoner (META) layers. It would also include implementing more complex features that were omitted for this prototype stage, such as attention and learning in the KNN.
 
 \clearpage
 \onecolumn
@@ -530,11 +546,10 @@ The main goal for next semester is to finalize the entire system, implementing m
 %	\label{uml_tags}
 %\end{figure}
 
-\missingfigure{UML Diagrams of ES and KNN packages}
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/guice_graph.pdf}
-	{Guice dependency graph.}
+	\caption{Guice dependency graph.}
 	\label{fig:guice_graph}
 \end{figure}
 
