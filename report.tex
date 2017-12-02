@@ -81,7 +81,7 @@ Under my supervision, several undergraduate students worked on the Prometheus la
 
 \listoffigures
 \listoftables
-\lstlistoflistings
+%\lstlistoflistings
 \clearpage
 
 \twocolumn
@@ -117,11 +117,11 @@ The architecture of Prometheus is loosely inspired from the structure of the hum
 
 \begin{figure*}[!htb]
 	\includegraphics[width=\textwidth]{figures/ai_model.pdf}
-	\caption[Prometheus AI model.]{Prometheus AI model. Blue represents Prometheus and green represents the robots.}
+	\caption[Prometheus AI model.]{Prometheus AI model. Blue represents Prometheus and red represents the robots.}
 	\label{model}
 \end{figure*}
 
-The theory needed to understand these four layers will be given in \autoref{sec:background}. The assigned task will then be described in \autoref{sec:problem}. Design criteria will be discussed in \autoref{sec:design}. The description of the work done this semester can be found in \autoref{sec:implementation}, and the results and tests will be discussed in \autoref{sec:results}. Finally, the possible future impact of this project on society and the environment will be explored in \autoref{sec:impact}.
+The theory needed to understand these four layers will be given in \autoref{sec:background}. The assigned task will then be described in \autoref{sec:problem}. Design criteria will be discussed in \autoref{sec:design}. The description of the work done can be found in \autoref{sec:implementation}, and the results and tests will be discussed in \autoref{sec:results}. Finally, the possible future impact of this project on society and the environment will be explored in \autoref{sec:impact}.
 
 The scope of this thesis is primarily to implement the KNN and ES layers of Prometheus. Therefore, more detail will be given for these layers.
 
@@ -143,11 +143,11 @@ The NN gathers raw sensor data and will build an abstract view of the robot's su
 	\item Localize objects in the image.
 \end{enumerate}
 
-Ultimately, the classification and localization of objects will produce abstract informational tags, which will be passed on to the KNN. These tags can therefore be characteristics of objects in the world, such as distance. The tags can also have associated confidence confidence values produced by the NN, which can be converted to belief within the KNN.
+Ultimately, the classification and localization of objects will produce abstract informational tags, which will be passed on to the KNN. These tags can therefore be characteristics of objects in the world, such as distance. The tags can also have associated confidence values, which can be converted to belief within the KNN.
 
 \subsection{Knowledge Node Network}
 
-The KNN layer is the analog to memory in the human brain. It takes in the tags provided by the NN and outputs tags based on its knowledge of the environment. It consists of interconnected Knowledge Nodes (KNs), which are abstract structures representing memories and their connections to other memories. A simple model of a Knowledge Node (KN) can be seen in \ar{kn}.
+The KNN layer is the analog to memory in the human brain. It takes in the tags provided by the NN and outputs tags based on its knowledge. It consists of interconnected Knowledge Nodes (KNs), which are abstract structures representing memories and their connections to other memories. A simple model of a Knowledge Node (KN) can be seen in \ar{kn}.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/knowledge_node.pdf}
@@ -156,68 +156,63 @@ The KNN layer is the analog to memory in the human brain. It takes in the tags p
 	\label{kn}
 \end{figure}
 
-KNs have an input tag representing some information, and output tags representing information related to the input tag. When a KN is stimulated it becomes ``excited''. Tags in the KNN can become ``active'', meaning the associated KN is stimulated beyond a threshold. We say that the associated KN ``fires'' in this case. For example, if the NN determines that it observes a ball and passes that information on to the KNN, then a ``ball'' tag may become active in the KNN. This would excite the KN with input tag ``ball''. If that KN fires, other tags related to that observation can become active. For example, tags representing ball characteristics such as ``round object'' may become active. This tag in turn may be connected to another KN, potentially causing more activation.
+KNs have an input tag representing some datum, and output tags representing related data. When a KN is stimulated it becomes ``excited''. Tags in the KNN can become ``active'', meaning the associated KN is excited beyond a threshold. We say that the associated KN ``fires'' in this case. For example, if the NN observes a ball and provides that information to the KNN, then a ``ball'' tag may become active in the KNN. This would excite the KN with input tag ``ball''. If that KN fires, other tags related to that observation can become active. For example, tags representing ball characteristics such as ``round object'' may become active. This tag in turn may be connected to another KN, potentially causing more activation. More details about the structure of these tags will be provided in \cref{sec:background_expert_system}, where the Expert System will be discussed.
 
-There are different ways that KN excitation could be implemented. With simple linear activation, excitation would increment the node's activation parameter, which initially starts at 0. If $activation \geq threshold$, the KN fires, causing the activation of the output tags. This description corresponds to forwards thinking. The activation can also be achieved using a sigmoid function, which is more representative of neurons in the brain \cite{neuro}.
-
-
-There is a strength value associated with every KN which represents how much weight an activation has and therefore how quickly that node will fire. A simple implementation of strength would be as a constant coefficient multiplying the activation parameter. So, instead of checking when the activation is greater than the threshold, one would check if $activation * strength \geq threshold$, where the strength is positive. The strength value could be 0 however, which effectively shuts off the KN. Another way of implementing strength is to check $activation + strength \geq threshold$. In this case, strength can be negative and make the KN fire later than normal.
-
-Strength can be seen as the firing predisposition of neurons in the brain as a result of learning \cite{vybihal-knowledge}. Indeed, learning can increase the synaptic strength between neurons and cause early  firing of those neurons \cite{hebb}. For example, a person who has had a bad experience with spiders would fire their fear response upon seeing a spider more quickly than one without that fear.
+There is a strength value associated with every KN which represents how much weight an activation has and therefore how quickly that node will fire. Strength can be seen as the firing predisposition of neurons in the brain as a result of learning \cite{vybihal-knowledge}. Indeed, learning can increase the synaptic strength between neurons and cause early  firing of those neurons \cite{hebb}. For example, a person who has had a bad experience with spiders would fire their fear response upon seeing a spider more quickly than one without that fear.
 
 Every KN can have a belief value associated with it, representing how certain the KNN is that the input tag is true. In this case, the belief value would be stored within the KN itself. These belief values can come from the NN, since a neural network can associate confidence values with its classifications of objects \cite{mitchell1997machine}. When initiating a think cycle, the belief values at each stage can be multiplied with each other to produce a new confidence value, making the KNN less certain of a memory as it searches through its tree of KNs. This represents how belief changes when thinking. Indeed, some memories in the brain require a great deal of thinking to reach and, as such, can be less certain than other memories. This can lead to the recollection of false memories \cite{falsememories}.
 
-Note that the activation of a KN and the belief value associated with it are two different concepts. Indeed, a KN may be fired even if the KNN knows that it is false. This can represent an agent ``lying'' to itself or repeating a thought process it knows to be false. This is known as ``self-deception'' in humans and it has been argued that this can be used for positive mental health \cite{taylor1989positive}.
+Note that the activation of a KN and the belief value associated with it are two different concepts. Indeed, a KN may be fired even if the KNN knows that it is false. This can represent an agent ``lying'' to itself or repeating a thought process it knows to be false. This is known as ``self-deception'' in humans and it has been argued that this can be used for positive mental health \cite{taylor1989positive}. In the context of Prometheus, this may help the system achieve its desired goal.
 
-Searching in the KNN represents an activation routine, which activates tags and potentially fires KNs. The KNN has four ways of searching: direct, forward, backward, and lambda. Thinking in the KNN is a related concept to searching. Whereas in search input tags are provided to guide the KNN, in thinking, the KNN uses its currently active tags to activate further tags. In this way, thinking is a special case of searching, where the input tags of the search are the active tags in the KNN. The KNN has three ways of thinking: forward, backward, and lambda. The version of searching or thinking to be done by the KNN is chosen by the META. 
+Searching in the KNN represents a tag activation routine. The KNN has four ways of searching: direct, forward, backward, and lambda. Thinking in the KNN is a related concept to searching. Whereas in search input tags are provided to guide the KNN, in thinking, the KNN uses its currently active tags to activate further tags. In this way, thinking is a special case of searching, where the input tags of the search are the active tags in the KNN. The KNN has three ways of thinking: forward, backward, and lambda. The version of searching or thinking to be done by the KNN is chosen by the META. 
 
-Direct searching is a simple lookup of the desired Tag and excitation of the associated KN. This represents the simplest form of thinking in the KNN and can be seen in \cref{fig:direct_search}.
+Direct searching is a simple lookup of the desired tag and excitation of the associated KN. This is the simplest search in the KNN and can be seen in \cref{fig:direct_search}.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/direct_search.pdf}
-	\caption{Direct search in the KNN.}
+	\caption{Direct searching in the KNN.}
 	\label{fig:direct_search}
 \end{figure}
 
-Forward thinking is depicted in \autoref{think_forwards}. Firing a KN can cause forward activation of more KNs, hence the ``forwards'' naming.
+Forward searching or thinking is depicted in \autoref{think_forwards}. Firing a KN can cause forward activation of more KNs, hence the ``forward'' naming.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/forward_search.pdf}
-	\caption{Thinking forwards in the KNN.}
+	\caption{Forward searching or thinking in the KNN.}
 	\label{think_forwards}
 \end{figure}
 
-Thinking backward starts at the output tags of KNs, and works backwards, as can seen in \autoref{think_backwards}. In its simplest form, it checks output tags of KNs and, if all of them are active, the input tag must be active as well, so that KN is fired.
+Searching or thinking backward starts at the output tags of KNs, and works backwards, as can seen in \autoref{think_backwards}. It checks output tags of KNs and, if a certain ratio of them match the search input tags, the KN's input tag is activated. This ratio is known as the partial match ratio.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/backward_search.pdf}
-	\caption{Thinking backwards in the KNN.}
+	\caption{Backward searching or thinking in the KNN.}
 	\label{think_backwards}
 \end{figure}
 
-This type of thinking can be more difficult to implement than forwards thinking, since one must decide what percentage of active output tags of a KN corresponds to an active input tag. For instance, should a KN fire when 100\% of its output nodes are active, or when 75\% are active? This relates to the belief with which the KNN believes the tag associated with that node to be true. As a concrete example, if you observe an object that has four wheels, seats, and a steering wheel, how confident are you that that object is a car? Realistically, humans will often classify what they observe with some uncertainty \cite{uncertainty} and this can be represented with backwards thinking. This type of thinking occurs constantly in the background in humans \cite{vybihal-knowledge}, and this is something to keep in mind during implementation.
+The partial match ratio relates to the extent to which the KNN believes the tag associated with that node to be true. As a concrete example, if you observe an object that has four wheels, seats, and a steering wheel, how confident are you that that object is a car? Realistically, humans will often classify what they observe with some uncertainty \cite{uncertainty} and this can be represented with backwards thinking. This type of thinking occurs constantly in the background in humans \cite{vybihal-knowledge}.
 
-Lambda thinking uses a combination of forwards and backwards, and can be seen in \autoref{think_lambda}. It is called ``lambda'' thinking because the shape of the thinking trajectory matches a Greek uppercase lambda ($\Lambda$). It first looks at output tags of KNs and propagates activation backwards, similar to backwards thinking. After a certain amount of nodes are fired, it will then start activating forwards, similar to thinking forwards. An interesting question is how far backwards should lambda thinking go before starting to cascade forwards? This relates to how general one wants to explore before searching for a more specific value.
+Lambda searching or thinking uses a combination of forward and backward, and can be seen in \autoref{think_lambda}. It is called ``lambda'' because the shape of the thinking trajectory resembles a Greek uppercase lambda ($\Lambda$). It first looks at output tags of KNs and propagates activation backwards, similar to backward search. After a certain amount of nodes are fired, it will then start activating forwards, similar to forward search. An interesting question is how far backwards should lambda thinking go before starting to cascade forwards? This relates to how general one wants to explore before searching for a more specific value.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/lambda_search.pdf}
-	\caption{Lambda thinking in the KNN.}
+	\caption{Lambda searching or thinking in the KNN.}
 	\label{think_lambda}
 \end{figure}
 
-This type of thinking occurs in humans when using analogical reasoning to find a memory \cite{vybihal-lambda}. In essence, when a person wants to locate a memory that is not directly accessible, they will explore related memories, move their way ``backwards'' to concepts related to the desired memory, and think ``forwards'' to focus in on the desired memory. For example, if one is asked where they were in 2002 on a specific date, they most likely would not remember. If they explore related dates and events in their life, however, they may be able to narrow down and extract that memory. In the context of the Prometheus system, lambda thinking will be attempted if all other forms of thinking fail (forwards and backwards).
+This type of thinking occurs in humans when using analogical reasoning to find a memory \cite{vybihal-lambda}. In essence, when a person wants to locate a memory that is not directly accessible, they will explore related memories, move their way ``backwards'' to similar concepts, and think ``forwards'' to focus in on the desired memory. For example, if one is asked where they were in 2002 on a specific date, they most likely would not remember. If they explore related dates and events in their life, however, they may be able to narrow down and extract that memory. In the context of the Prometheus system, lambda search will be attempted if all other searches fail (forward and backward).
 
-All forms of thinking can continue until there are no more KNs to activate, which corresponds to natural quiescence. There can also be a fixed number of thinking cycles, which represents how much effort is being put into thinking. Indeed, in humans, thinking is done with varying degrees of effort \cite{thinking}. This number of thinking cycles also represents how deep the search will go into the knowledge node graph, and is therefore called ``ply''.
+All forms of searching or thinking can continue until there are no more tags to activate, which corresponds to natural quiescence. There can also be a fixed number of thinking cycles, which represents how much effort is being put into thinking. Indeed, in humans, thinking is done with varying degrees of effort \cite{thinking}. This number of thinking cycles also represents how deep the search will go into the KN graph, and is therefore called the ``ply'' of the search.
 
 Age represents how long it has been since a KN has been excited. The idea is that, after a KN has aged a certain amount of time, that node will be discarded, similarly to how old memories are discarded in the brain \cite{aging}. In any search in the KNN, ``young'' KNs (with a low age) are visited first.
 
-The result of all forms of searching and thinking is a collection of activated tags, which are passed on to the ES.
+The result of all forms of searching or thinking is a collection of activated tags, which are passed on to the ES.
 
-\subsection{Expert System}
+\subsection{Expert System} \label{sec:background_expert_system}
 
 The ES layer is a basic logic reasoner. It is not aware of its current reality or any context. It takes in the tags provided by the KNN and interprets them as either facts, recommendations or rules.
 
-Facts are simple calculus predicates showing that something is true. They take the form of a predicate, as shown in \cref{eq:fact}, where $P$ is the predicate name and each $A_i$ is an argument.
+Facts are simple calculus predicates showing that something is true. Their form can be seen in \cref{eq:fact}, where $P$ is the predicate name and each $A_i$ is an argument.
 
 \begin{equation} \label{eq:fact}
 	Fact \coloneqq P(A_1, \ldots, A_n)
@@ -244,7 +239,7 @@ Facts are simple calculus predicates showing that something is true. They take t
 
 As a more concrete example, a fact argument can represent a certain measurement, like $distance = 5$ representing the robot's distance from a wall as measured by one of its sensors.
 
-Recommendations represent suggestions for actions to be taken by a robot. They take on the same predicate form as Facts, as shown in \cref{eq:recommendation}. The only difference is that it is customary to prefix the predicate with a `@' character. For example, @Turn(left) is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to actually take that action.
+Recommendations represent suggestions for actions to be taken by a robot. They take on the same predicate form as Facts, as shown in \cref{eq:recommendation}. The only difference is that it is customary to prefix the predicate name with a `@' character. For example, @Turn(left) is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to actually take that action.
 
 \begin{equation} \label{eq:recommendation}
 	Recommendation \coloneqq @P(A_1, \ldots, A_n)
@@ -269,7 +264,7 @@ The most important part of the previous process is the thinking stage, which rep
 
 \subsection{Meta Reasoner}
 
-The META layer represents high-level reasoning in the human brain. It is aware of its environment and context, and makes decisions based on what it believes to be right. It is paranoid, and constantly checks whether the tags reported by the rest of the AI system make sense based on its expected view of the world. If it decides to make a decision, it sends a command to the actuators of the robots to decide how to move. If it is not happy with the recommendations from the ES, it may send a query back to the KNN to initiate another think cycle and generate new recommendations.
+The META layer represents high-level reasoning in the human brain. It is aware of its environment and context, and makes decisions based on what it believes to be right. It is paranoid, and constantly checks whether the tags reported by the rest of the AI system make sense based on its expected view of the world. If it decides to make a decision, it sends a command to the actuators of the robots to decide how to move. If it is not happy with the recommendations from the ES, it may send a query back to the KNN to initiate another think cycle and generate new recommendations, as can be seen in \cref{model_labeled}.
 
 \begin{figure*}[!htb]
 	\includegraphics[width=\textwidth]{figures/ai_model_labeled.pdf}
@@ -295,7 +290,7 @@ The main task for this thesis is to construct the KNN and ES in Java. The requir
 A very important consideration when designing the system is speed. Since the robots may have to react very quickly to stimuli in the environment, the reasoning in the AI must be as fast as possible. This is especially true in the hazardous environments for which this system could be useful for, as specified in \autoref{sec:intro}.
 
 \subsection{Object Oriented Programming}
-Another important design choice is to leverage object-oriented programming (OOP) as much as possible. OOP allows extensive planning before even beginning to write code, which can identify any flaws in the initial design. It also allows the code to be very clean and reusable \cite{oop}. Since Java is the programming language chosen for the project, OOP is also the natural way to proceed.  OOP principles such as polymorphism and encapsulation will be followed closely. One important OOP principle to use is abstraction. Indeed, the system should be as abstract as possible, while still performing its desired task. For instance, the system should be general enough to perform under simulations, as well as in real-life environments. It should also ideally be able to perform in vastly different environments, with varying tasks. Encapsulation can also be very useful, since each layer of the system has unique, localized functionality that does not need to be visible from the rest of the system.
+Another important design choice is to leverage object-oriented programming (OOP) as much as possible. OOP allows extensive planning before even beginning to write code, which can identify any flaws in the initial design. It also allows the code to be very clean and reusable \cite{oop}. OOP principles such as polymorphism and encapsulation will be followed closely. One important OOP principle to use is abstraction. Indeed, the system should be as abstract as possible, while still performing its desired task. For instance, the system should be general enough to perform under simulations, as well as in real-life environments. It should also ideally be able to perform in vastly different environments, with varying tasks. Encapsulation can also be very useful, since each layer of the system has unique, localized functionality that does not need to be visible from the rest of the system.
 
 The OOP principles of SOLID \cite{martin_2009} will also be followed:
 
@@ -308,16 +303,26 @@ The OOP principles of SOLID \cite{martin_2009} will also be followed:
 \end{description}
 
 \subsection{Readability \& Documentation}
-One final design criterion is that the code written should be very easy to understand. This means implementing each method and class in the most intuitive way possible and providing good documentation to support the code. This is to ensure that anyone wanting to work with the code or looking to understand how the system works has an easy time doing so.
+The code written should be very easy to understand. This means implementing each method and class in the most intuitive way possible and providing good documentation to support the code. This is to ensure that anyone wanting to work with the code or looking to understand how the system works has an easy time doing so.
 
 \subsection{Testing}
-An important criterion is that the code be heavily tested. This includes integration tests, covering end-to-end functionality, and unit tests. The unit tests should be behavior-driven, so that a developer reading the tests can easily understand the purpose of the element being tested. The aim is that at least \SI{95}{percent} of the code be covered by tests.
+An important criterion is that the code be heavily tested. This includes integration tests, covering end-to-end functionality, and unit tests. The unit tests should be behavior-driven, so that a developer reading the tests can easily understand the purpose of the element being tested.
 
 \subsection{Quality Assurance}
 With the numerous undergraduate students showing interest in working on Prometheus, there must be a system in place to ensure the quality of the code is upheld. This may include automatic testing of the code, as well as human review of code before being committed.
 
 \section{Implementation}
 \label{sec:implementation}
+
+\subsection{Prometheus}
+A high-level \code{Prometheus} interface was created, and was placed in the \code{prometheus package}. Its dependencies can be seen in \cref{fig:uml_prometheus}. The use of the \code{NeuralNetwork}, \code{KnowledgeNodeNetwork}, \code{ExpertSystem} and \code{MetaReasoner} interfaces is a good example of many of the SOLID principles, like single responsibility, interfaces segregation and dependency inversion.
+
+\begin{figure}[!htb]
+	\includegraphics[width=\columnwidth]{figures/uml_prometheus.pdf}
+	\caption{UML diagram of the \code{Prometheus} dependencies.}
+	\label{fig:uml_prometheus}
+\end{figure}
+
 
 \subsection{Tags}
 
@@ -363,20 +368,32 @@ The \code{KnowledgeNode} class implements the functionality of a KN, which has t
 
 \begin{labeling}{\code{outputTags}}
 	\item[\code{inputTag}] Input \code{Tag}.
-	\item[\code{outputTags}] \code{Array} of output \code{Tags}.
+	\item[\code{outputTags}] \code{HashSet} of output \code{Tags}.
 	\item[\code{activation}] \code{int} starting at 0, incrementing when the \code{KnowledgeNode} is excited.
 	\item[\code{threshold}] \code{int} threshold that causes firing of the \code{KnowledgeNode}.
-	\item[\code{strength}] \code{int} that biases the activation of a \code{KnowledgeNode}, causing early firing. The \code{KnowledgeNode} is fired if \code{(activation $\cdot$ strength) $\geq$ threshold}.
+	\item[\code{strength}] \code{int} that biases the activation of a \code{KnowledgeNode}, causing early firing. The \code{KnowledgeNode} is fired if \code{(activation $\times$ strength) $\geq$ threshold}.
 	\item[\code{confidence}] \code{int} representing the belief that the \code{inputTag} is true (0 to 100).
 	\item[\code{age}] \code{int} representing the age of the \code{KnowledgeNode}.
 \end{labeling}
 
+\subsubsection{Excitation}
+
+There are different ways that KN excitation could be implemented. With simple linear activation, excitation would increment the node's activation parameter, which initially starts at 0. If $activation \geq threshold$, the KN fires, causing the activation of the output tags. The activation can also be implemented using a sigmoid function, which is more representative of neurons in the brain \cite{neuro}. The linear activation was chosen to be implemented for its simplicity.
+
+\subsubsection{Strength}
+
+A simple implementation of strength would be as a constant coefficient multiplying the activation parameter. So, instead of checking when the activation is greater than the threshold, one would check if $activation \times strength \geq threshold$, where the strength is positive. The strength value could be 0 however, which effectively shuts off the KN. Another way of implementing strength is to check $activation + strength \geq threshold$. In this case, strength can be negative and make the KN fire later than normal. The constant coefficient version of strength was implemented.
+
+\subsubsection{Search}
+
 The most important methods in the \code{KnowledgeNodeNetwork} are the ones relating to searching and thinking, as described in \cref{sec:background}. The search methods are \code{directSearch()}, \code{forwardSearch()}, \code{backwardSearch()} and \code{lambdaSearch()}. The \code{directSearch()} method takes as input the \code{Tag} to activate and returns the \code{Set} of \code{Tag}s activated as a result of exciting the \code{KnowledgeNode} associated with the input \code{Tag}. Note that the input \code{Tag} itself is not returned.
 Similarly, the other search methods take a \code{Set} of \code{Tag}s as input and return the \code{Set} of \code{Tag}s activated as a result of searching. The other search methods also take a \code{ply} parameter specifying the depth of the search. If \code{ply} is 0, the search continues until quiescence, i.e., until no \code{Tag}s are activated during a search cycle.
 
-For each of the search methods, there is an associated searcher class, i.e., \code{DirectSearcher}, \code{ForwardSearcher}, \code{BackwardSearcher} and \code{LambdaSearcher}. Delegating the search behavior to different classes allows for modularity and easy unit testing. Re-use of these classes was also taken advantage of, with \code{ForwardSearcher} using \code{DirectSearcher}, and \code{LambdaSearcher} using \code{ForwardSearcher} and \code{BackwardSearcher}, as shown in \cref{fig:uml_knn}. The \code{ForwardSearcher}, \code{BackwardSearcher} and \code{LambdaSearcher} also extend a \code{Searcher} abstract class, which handles some common functionality, i.e., searching until quiescence when the \code{ply} is 0.
+For each of the search methods, there is an associated searcher class, i.e., \code{DirectSearcher}, \code{ForwardSearcher}, \code{BackwardSearcher} and \code{LambdaSearcher}. This is a good example of the single responsibility principle. Delegating the search behavior to different classes allows for modularity and easy unit testing. Re-use of these classes was also taken advantage of, with \code{ForwardSearcher} using \code{DirectSearcher}, and \code{LambdaSearcher} using \code{ForwardSearcher} and \code{BackwardSearcher}, as shown in \cref{fig:uml_knn}. The \code{ForwardSearcher}, \code{BackwardSearcher} and \code{LambdaSearcher} also extend a \code{Searcher} abstract class, which handles some common functionality, i.e., searching until quiescence when the \code{ply} is 0.
 
 Similarly, there are methods relating to thinking, i.e, \code{forwardThink()}, \code{backwardThink()} and \code{lambdaThink()}. These behave in the same way as their searching counterparts, except that they take as input all the currently active tags in the KNN, instead of user-provided input.
+
+\subsubsection{Aging}
 
 There are two main choices for the implementation of aging of the KNs:
 
@@ -385,7 +402,7 @@ There are two main choices for the implementation of aging of the KNs:
 	\item The KN's age is initialized to the current UNIX time. When a KN is about to be excited, the current UNIX time is compared to the initial one. If the difference is greater than some threshold, the KN is discarded. Otherwise, the KN's age is set to the current UNIX time. The KNs can be stored in a sorted mapping from age to KN.
 \end{enumerate}
 
-The \nth{2} method from the above was chosen for the main reason that it is computationally much simpler to update a KN upon exciting it, rather than updating multiple at a time every $x$ time interval. There is a trade-off however, since the \nth{1} method has a simpler storage mechanism, dealing with either incrementing an index or resetting an index to 0 at every age update. The \nth{2} method has to instead keep a sorted mapping from the UNIX time to the KNs. While this is more complex, it can be relatively simply implemented with a \code{TreeMap} in Java, which is what was chosen. In this way, for each search method, the youngest KNs are excited first.
+The second method from the above was chosen for the main reason that it is computationally much simpler to update a KN upon exciting it, rather than updating multiple at a time every $x$ time interval. There is a trade-off however, since the first method has a simpler storage mechanism, dealing with either incrementing an index or resetting an index to 0 at every age update. The second method has to instead keep a sorted mapping from the UNIX time to the KNs. While this is more complex, it can be relatively simply implemented with a \code{TreeMap} in Java, which is what was chosen. In this way, for each search method, the youngest KNs are excited first.
 
 \subsection{Expert System}
 
@@ -424,7 +441,7 @@ The Java graph visualization library GraphStream was used to visualize the KNN a
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/uml_graphing.pdf}
-	{UML diagram of the important classes in the \code{graphing} package.}
+	\caption{UML diagram of the important classes in the \code{graphing} package.}
 	\label{fig:uml_graphing}
 \end{figure}
 
@@ -452,11 +469,11 @@ Extensive documentation was created in Javadoc\footnote{The Javadoc can be found
 	\begin{tabular}{c | c | c | c | c} 
 		\textbf{State} & \textbf{Ready Rules} & \textbf{Active Rules} & \specialcell{\textbf{Active} \\ \textbf{Facts}} & \specialcell{\textbf{Active} \\ \textbf{Recommendations}}  \\ \hline
 		
-		Initial & \specialcell{$(A)(B)\rightarrow(D)$ \\ $(D)(B)\rightarrow(E)$ \\ $(D)(E)\rightarrow(F)$\\ $(G)(A)\rightarrow(H)$ \\ $(E)(F)\rightarrow(\#Z)$} &  & $(A),(B)$ & $(\#X),(\#Y)$ \\ \hline
+		Initial & \specialcell{$A, B\rightarrow D$ \\ $D, B\rightarrow E$ \\ $D, E\rightarrow F$\\ $G, A\rightarrow H$ \\ $E, F\rightarrow @Z$} &  & $A, B$ & $@X, @Y$ \\ \hline
 		
 		$\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ & $\vdots$ \\ \hline
 		
-		Final & $(G)(A)\rightarrow(H)$ & \specialcell{$(A)(B)\rightarrow(D)$ \\ $(D)(B)\rightarrow(E)$ \\ $(D)(E)\rightarrow(F)$ \\ $(E)(F)\rightarrow(\#Z)$} & \specialcell{$(A),(B),$ \\ $(D),(E)$ \\ $(F)$} & $(\#X),(\#Y),(\#Z)$		
+		Final & $G, A\rightarrow H$ & \specialcell{$A, B\rightarrow D$ \\ $D, B\rightarrow E$ \\ $D, E\rightarrow F$ \\ $E, F\rightarrow @Z$} & \specialcell{$A, B$ \\ $D, E,$ \\ $F$} & $@X, @Y, @Z$		
 	\end{tabular}
 	\label{testES}
 \end{table*}
@@ -483,12 +500,86 @@ Extensive documentation was created in Javadoc\footnote{The Javadoc can be found
 %\end{table*}
 
 \section{Results \& Tests} \label{sec:results}
-\todo{BDD with Mockito + TestNG + Guice}
-All tests on the system were conducted using the TestNG framework in Java, which provides a simple and intuitive way to create assertions in tests. These tests were placed in the \code{test} package of the project. A UML diagram of the \code{test} package can be seen in \autoref{uml_test} of the Appendix. The primary methods of interest in the test package are \code{testKNN()}, \code{testES()}, and \code{testKNNandES()}.
+All tests on the system were conducted using the TestNG framework in Java, which provides a simple and intuitive way to create assertions in tests. These tests were placed in the \code{test} directory of the project.
 
-The test setup for the \code{testKNN()} method can be seen in \autoref{testKNN}. It creates a KNN, with every node having a \code{threshold} value of 1 to simplify the activation process. The system starts out with $A$ as the only active \code{Tag}, and \code{testKNN()} will make the KNN \code{think()} until natural quiescence. It is therefore expected that all the \code{Tags} shown in \autoref{testKNN} will become active by the end of the thinking process. The initial and final states are both asserted with TestNG in \code{testKNN()}, with positive results.
+Unit tests for individual methods and classes were constructed using Mockito, which allows easy mocking of dependencies. These tests were created in parallel with writing the functional code, to ensure proper functionality.
 
-The test setup for the \code{testES()} method can be seen in \autoref{testES}. The columns from left to right (ignoring State) correspond to the elements in \code{readyRules}, \code{activeRules}, \code{facts}, and \code{recommendations}, respectively. The first row corresponds to the initial setup of the ES, and the last row corresponds to the expected final state. Both the initial and final states are asserted with TestNG in \code{testES()}, with positive results.
+Integration tests were also created to test end-to-end behavior. The test setup for an ES integration test can be seen in \autoref{testES}. The columns from left to right (ignoring State) correspond to the elements in \code{readyRules}, \code{activeRules}, \code{facts}, and \code{recommendations}, respectively. The first row corresponds to the initial setup of the ES, and the last row corresponds to the expected final state. Both the initial and final states are asserted with TestNG. This test can be found in the \code{SimpleExpertSystemTest} class of the \code{integration} package in the test directory.
+
+Some visual integration tests were carried out with the created KNN visualization tool. Visualizations of forward, backward and lambda search can be seen in \cref{fig:forward_search_test,fig:backward_search_test,fig:lambda_search_test}, respectively. Refer to \cref{fig:knn_graph_legend} for the meaning of the node colors. In these tests, a threshold of 1 was used for simplicity and the initial active tags are provided as search input.
+
+\begin{figure*}
+	\begin{subfigure}[!htb]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\columnwidth]{figures/knn_simple_forward_think_0.pdf}
+		\caption{Ply 0.}
+	\end{subfigure}
+	\begin{subfigure}[!htb]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\columnwidth]{figures/knn_simple_forward_think_1.pdf}
+		\caption{Ply 1.}
+	\end{subfigure}
+	\begin{subfigure}[!htb]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\columnwidth]{figures/knn_simple_forward_think_2.pdf}
+		\caption{Ply 2.}
+	\end{subfigure}
+	\caption{Forward search visualization in the KNN.}
+	\label{fig:forward_search_test}
+\end{figure*}
+
+\begin{figure*}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\columnwidth]{figures/knn_simple_backward_think_0.pdf}
+		\caption{Ply 0.}
+	\end{subfigure}
+	\begin{subfigure}[!htb]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\columnwidth]{figures/knn_simple_backward_think_1.pdf}
+		\caption{Ply 1.}
+	\end{subfigure}
+	\begin{subfigure}[!htb]{0.32\textwidth}
+		\centering
+		\includegraphics[width=\columnwidth]{figures/knn_simple_backward_think_2.pdf}
+		\caption{Ply 2.}
+	\end{subfigure}
+	\caption{Backward search visualization in the KNN.}
+	\label{fig:backward_search_test}
+\end{figure*}
+
+
+\begin{figure*}[!htb]
+	\centering
+	\begin{subfigure}[!htb]{0.19\textwidth}
+		\centering
+		\includegraphics[width=\columnwidth]{figures/knn_simple_lambda_think_0.pdf}
+		\caption{Ply 0.}
+	\end{subfigure}
+	\begin{subfigure}[!htb]{0.19\textwidth}
+		\centering
+		\includegraphics[width=\columnwidth]{figures/knn_simple_lambda_think_1.pdf}
+		\caption{Ply 1.}
+	\end{subfigure}
+	\begin{subfigure}[!htb]{0.19\textwidth}
+		\centering
+		\includegraphics[width=\columnwidth]{figures/knn_simple_lambda_think_2.pdf}
+		\caption{Ply 2.}
+	\end{subfigure}
+	\begin{subfigure}[!htb]{0.19\textwidth}
+		\centering
+		\includegraphics[width=\columnwidth]{figures/knn_simple_lambda_think_3.pdf}
+		\caption{Ply 3.}
+	\end{subfigure}
+	\begin{subfigure}[!htb]{0.19\textwidth}
+		\centering
+		\includegraphics[width=\columnwidth]{figures/knn_simple_lambda_think_4.pdf}
+		\caption{Ply 4.}
+	\end{subfigure}
+	\caption{Lambda search visualization in the KNN.}
+	\label{fig:lambda_search_test}
+\end{figure*} 
 
 \section{Impact on Society and the Environment}
 \label{sec:impact}
@@ -525,9 +616,9 @@ The system could also be used to further space exploration, with an AI controlli
 \section{Conclusion}
 % Use this section to summarize what was accomplished in this semester, provide a summary of the next steps and share any insight you have learned.
 
-The Expert System (ES) and Knowledge Node Network (KNN) layers of the Prometheus AI model were completed in Java based on design criteria and feedback from the supervisor. The design of the prototypes has required a great deal of thought and planning to ensure efficiency and proper behaviour. These prototypes were tested using the TestNG Java framework with positive results, and extensive Javadoc was produced. Possible impacts on the environment and society were also discussed.
+The Expert System (ES) and Knowledge Node Network (KNN) layers of the Prometheus AI model were completed in Java based on design criteria and feedback from the supervisor. These layers were tested using the TestNG Java framework with positive results, and extensive Javadoc was produced. Possible impacts on the environment and society were also discussed.
 
-Possible future work would include finalizing the entire system by building the Neural Network (NN) and Meta Reasoner (META) layers. It would also include implementing more complex features that were omitted for this prototype stage, such as attention and learning in the KNN.
+Possible future work would include finalizing the entire system by building the Neural Network (NN) and Meta Reasoner (META) layers. It would also include implementing more complex features, such as attention and learning in the KNN.
 
 \clearpage
 \onecolumn
@@ -536,8 +627,8 @@ Possible future work would include finalizing the entire system by building the 
 \renewcommand\thefigure{\thesection.\arabic{figure}}
 \setcounter{figure}{0}    
 
-\section{UML Diagrams}
-\label{sec:uml}
+%\section{UML Diagrams}
+%\label{sec:uml}
 
 %\begin{figure}[!htb]
 %	\centering
@@ -547,11 +638,11 @@ Possible future work would include finalizing the entire system by building the 
 %\end{figure}
 
 
-\begin{figure}[!htb]
-	\includegraphics[width=\columnwidth]{figures/guice_graph.pdf}
-	\caption{Guice dependency graph.}
-	\label{fig:guice_graph}
-\end{figure}
+%\begin{figure}[!htb]
+%	\includegraphics[width=\columnwidth]{figures/guice_graph.pdf}
+%	\caption{Guice dependency graph.}
+%	\label{fig:guice_graph}
+%\end{figure}
 
 
 \clearpage

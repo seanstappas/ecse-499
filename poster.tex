@@ -30,7 +30,7 @@
 				\parbox[t][\columnheight]{\textwidth}{
 				\begin{block}{Introduction \& Background}
 					\parbox{0.99\textwidth}{
-						\textbf{Prometheus} is an AI system designed to control and coordinate multiple \textbf{robots} based on their sensor data. Its architecture is loosely inspired from the structure of the human brain, and is composed of the following four layers: the \textbf{Neural Network (NN)}, the \textbf{Knowledge Node Network (KNN)}, the \textbf{Expert System (ES)}, and the \textbf{Meta Reasoner (META)}. The \textbf{Neural Network} layer is the interface to the robots' sensors and provides informational tags to the KNN.}
+						\textbf{Prometheus} is an AI system designed to control and coordinate multiple \textbf{robots} to achieve some goal. Its architecture is loosely inspired from the structure of the human brain, and is composed of the following four layers: the \textbf{Neural Network (NN)}, the \textbf{Knowledge Node Network (KNN)}, the \textbf{Expert System (ES)}, and the \textbf{Meta Reasoner (META)}. The \textbf{Neural Network} layer is the interface to the robots' sensors and provides informational tags to the KNN.}
 				
 					\begin{figure}[!htb]
 						\includegraphics[width=0.99\textwidth]{figures/ai_model_labeled.pdf}
@@ -108,14 +108,14 @@
 					\parbox{0.99\textwidth}{
 					There are two main assigned tasks over the past two semesters:
 					\begin{enumerate}
-						\item Design and implement the \textbf{Expert System} and \textbf{Knowledge Node Network} in Java.
-						\item Supervise undergraduate students working on Prometheus.
+						\item \textbf{Design} and implement the \textbf{Expert System} and \textbf{Knowledge Node Network} in Java.
+						\item \textbf{Supervise} undergraduate students working on Prometheus.
 				\end{enumerate}}
 				\end{block}
 					
 				\begin{block}{Design \& Implementation}
 					\parbox{0.99\textwidth}{
-					The high-level \textbf{Prometheus} interface has dependencies on the \code{NeuralNetwork}, \code{KnowledgeNodeNetwork}, \code{ExpertSystem} and \code{MetaReasoner} interfaces. The \code{KnowledgeNodeNetwork} and \code{ExpertSystem} layers are the ones that are currently implemented. The code base was designed to be \textbf{efficient}, \textbf{modular} and easily \textbf{testable}. The \textbf{tags} used throughout the system are implemented using a \code{Tag} Java class, with \code{Predicate} and \code{Rule} subclasses. The \code{Predicate} class is a superclass of the \code{Fact} and \code{Recommendation} and represents the possible output tags of a rule.}
+					The high-level \textbf{Prometheus} interface has dependencies on the \code{NeuralNetwork}, \code{KnowledgeNodeNetwork}, \code{ExpertSystem} and \code{MetaReasoner} interfaces. The \code{KnowledgeNodeNetwork} and \code{ExpertSystem} layers are the ones that are currently implemented. The code base was designed to be \textbf{object-oriented}, \textbf{efficient}, \textbf{modular} and easily \textbf{testable}. The \textbf{tags} used throughout the system are implemented using a \code{Tag} abstract class, with \code{Predicate} and \code{Rule} subclasses. The \code{Predicate} class is an abstract superclass of the \code{Fact} and \code{Recommendation} classes and represents the possible output tags of a rule.}
 				
 					\begin{figure}
 						\centering
@@ -124,7 +124,7 @@
 					\end{figure}			
 				
 					\parbox{0.99\textwidth}{
-					The most important method in the \textbf{Expert System} is \code{think()}, which executes \textbf{thinking cycles} and output recommendations. This is performed by the \code{Thinker} class and its associated \code{ThinkCycleExecutor}. The \code{rest()} method allows the creation of \textbf{new rules} based on existing ones, with the associated \code{Rester} and \code{RuleMerger} classes. The \code{teach()} method parses simple ``if-then'' \textbf{sentences} to generate rules by using the \code{Teacher} class.}
+					The most important method in the \textbf{Expert System} is \code{think()}, which executes \textbf{thinking cycles} and outputs recommendations. This is performed by the \code{Thinker} class and its associated \code{ThinkCycleExecutor}. The \code{rest()} method allows the creation of \textbf{new rules} with the \code{Rester} and \code{RuleMerger} classes. The \code{teach()} method parses simple ``if-then'' \textbf{sentences} to generate rules by using the \code{Teacher} class.}
 				
 					\begin{figure}
 						\centering
@@ -133,16 +133,19 @@
 					\end{figure}
 				
 					\parbox{0.99\textwidth}{
-					 \textbf{Searching} in the \textbf{Knowledge Node Network} is done by the \code{directSearch()}, \code{forwardSearch()}, \code{backwardSearch()} and \code{lambdaSearch()} methods. These are controlled by the \code{DirectSearcher}, \code{ForwardSearcher}, \code{BackwardSearcher} and \code{LambdaSearcher} classes, respectively. These \textbf{modular} classes allowed great \textbf{re-use}, with the \code{LambdaSearcher} using the \code{ForwardSearcher} and \code{BackwardSearcher}, and the \code{ForwardSeacher} using the \code{DirectSearcher}.}
+					 \textbf{Searching} in the \textbf{Knowledge Node Network} is done by the \code{directSearch()}, \code{forwardSearch()}, \code{backwardSearch()} and \code{lambdaSearch()} methods. These are controlled by the \code{DirectSearcher}, \code{ForwardSearcher}, \code{BackwardSearcher} and \code{LambdaSearcher} classes, respectively. These \textbf{modular} classes allowed great \textbf{re-use}, as can be seen in \cref{fig:uml_knn}. An interface to \textbf{load networks} from file was also created.
+					 
+					 KNs are implemented as \code{KnowledgeNode} objects. The \textbf{age} of a KN is implemented with UNIX timestamps, with old KNs being deleted. There is also a \textbf{belief} value associated with every KN which originates from the confidence assigned by the NN.}
 			
 					\begin{figure}
 						\centering
-						\includegraphics[width=0.6125\textwidth]{figures/uml_graphing.pdf}
+						\includegraphics[width=0.593\textwidth]{figures/uml_graphing.pdf}
 						\caption{UML diagram of the graphing package.}
+						\label{fig:uml_knn}
 					\end{figure}
 				
 				\parbox{0.99\textwidth}{
-				The Java \textbf{graph visualization} library GraphStream was used to visualize the KNN and the process of searching through it. At each thinking or searching cycle, the graph can be updated in the user-interface and saved to SVG screenshots.}
+				The Java \textbf{graph visualization} library GraphStream was used to visualize the KNN and the process of searching through it. At each thinking or searching cycle, the graph can be updated in the UI and saved to SVG. Separate visualizers were created for \textbf{forward}, \textbf{backward} and \textbf{lambda} searching.}
 					
 					\begin{figure}[!htb]
 						\centering
@@ -154,7 +157,7 @@
 				
 				
 				\parbox{0.99\textwidth}{
-					Prometheus is a Java \textbf{Maven} project, which allows very simple use of many open-source libraries. Some of the libraries used on this project include: \textbf{Google Guice} for modeling and building the dependencies between the layers and their modules, \textbf{Mockito} for mocking objects in unit tests, \textbf{TestNG} for running tests and summarizing their results and \textbf{Apache Commons Lang 3} for standardized \code{toString()}, \code{hashCode()} and \code{equals()} methods.}
+					Prometheus is a \textbf{Maven} project, which allows very simple use of many libraries. These libraries include: \textbf{Google Guice} for modeling and building the dependencies between the layers and their modules, \textbf{Mockito} for mocking objects in unit tests, \textbf{TestNG} for running tests and summarizing their results and \textbf{Apache Commons Lang 3} for standardized \code{toString()}, \code{hashCode()} and \code{equals()} methods.}
 					
 				\end{block}
 				}
@@ -163,23 +166,17 @@
 				\parbox[t][\columnheight]{\textwidth}{
 				\begin{block}{Results \& Tests}
 					\parbox{0.99\textwidth}{
-						\textbf{Unit tests} were created using \textbf{Mockito} and \textbf{TestNG}. These tests test the functionality of isolated methods. \textbf{Integration tests} were also created with \textbf{TestNG}, testing end-to-end behavior. All of these tests are part of a continuous integration test suite which runs on the GitHub repository whenever a commit is made. This is done using \textbf{Travis CI}. \cref{fig:test_es} shows a simple Expert System integration test.}
+						\textbf{Unit tests} were created using \textbf{Mockito} and \textbf{TestNG}. These tests test the functionality of isolated methods. \textbf{Integration tests} were also created with \textbf{TestNG}, testing end-to-end behavior. All of these tests are part of a continuous integration test suite which runs on the GitHub repository whenever a commit is made. This is done using \textbf{Travis CI}. \cref{fig:test_es} shows a simple Expert System integration test. Here, the test asserts that, given the provided initial conditions, the final state is reached correctly. Arguments are omitted for simplicity.}
 					
 					\begin{figure}[!htb]
 						\centering
-						\includegraphics[width=0.7325\textwidth]{figures/testES.pdf}
+						\includegraphics[width=0.702\textwidth]{figures/testES.pdf}
 						\caption
 						{ES test setup representing simple rules and facts that must be brought to quiescence.}
 						\label{fig:test_es}
 					\end{figure}
-%					\begin{figure}[!htb]
-%						\centering
-%						\includegraphics[width=\textwidth]{figures/animal_knn.pdf}
-%						\caption
-%						{Elaborate test KNN network representing connections between memories of animals and their characteristics. Credit for creating the graph goes to volunteer Laurence Liang.}
-%					\end{figure}
 					
-					\parbox{0.99\textwidth}{The \code{forwardSearch()}, \code{backwardSearch()} and \code{lambdaSearch()} were visualized using the created graph visualization tool. These can be seen in \cref{fig:forward_search_test,fig:backward_search_test,fig:lambda_search_test}. Please refer to \cref{fig:knn_legend} for the meaning of the nodes and their colors.}
+					\parbox{0.99\textwidth}{The \code{forwardSearch()}, \code{backwardSearch()} and \code{lambdaSearch()} were visualized using the graph visualization tool. These can be seen in \cref{fig:forward_search_test,fig:backward_search_test,fig:lambda_search_test}. Please refer to \cref{fig:knn_legend} for the meaning of the node colors. In these tests, a threshold of 1 was used for simplicity and the initial active tags are provided as search input.}
 					
 					\begin{figure}
 						\begin{subfigure}[!htb]{0.32\columnwidth}
@@ -257,7 +254,7 @@
 				\end{block}
 				\begin{block}{Conclusion}
 					\parbox{0.99\textwidth}{
-						Over the course of this project, I learned a great deal of skills relating to \textbf{designing} and \textbf{implementing} large-scale software projects, specifically with Java. I also learned a great deal about various \textbf{cognitive science} topics relating to Prometheus. Finally, setting up systems for software project \textbf{collaboration} was also learned. Possible further work relating to this project could be implementing the missing \textbf{NN} and \textbf{META} layers, as well as implementing more features in the KNN, such as \textbf{learning} and \textbf{attention}.}
+						Over the course of this project, I learned many skills relating to \textbf{designing} and \textbf{implementing} large-scale software projects. I also learned a great deal about various \textbf{cognitive science} topics. Setting up systems for software project \textbf{collaboration} was also learned. Possible further work relating to this project could be implementing the \textbf{NN} and \textbf{META} layers, as well as more features in the KNN, such as \textbf{learning} and \textbf{attention}.}
 				\end{block}
 			}
 			\end{column}
