@@ -19,6 +19,7 @@
 \usepackage{todonotes}
 \usepackage[noabbrev,capitalize,nameinlink]{cleveref}
 \usepackage{mathtools}
+\usepackage{pdflscape}
 
 \definecolor{dkgreen}{rgb}{0,0.6,0}
 \definecolor{gray}{rgb}{0.5,0.5,0.5}
@@ -70,7 +71,7 @@
 
 \section*{Abstract}
 % The abstract is an executive summary of your project/thesis. It should provide an overview of your project/thesis by addressing the following questions. a. What is the motivation for the project/thesis? b. What are the goals of the project/thesis? c. What was achieved this semester? d. What methods were used to make those achievements? The abstract should be between 200 and 250 words long.
-Prometheus AI is a model of the human brain with the goal of controlling and coordinating multiple robots in different environments. This could be useful in environments hazardous for humans, such as in the aftermath of a nuclear power disaster, or in outer space. The model consists of four layers: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES), and the Meta Reasoner (META). The NN classifies the signals coming from the robots' sensors and sends formatted tags to the KNN. The KNN represents memory and can initiate cascaded activation of memories in the form of tags, which are passed on to the ES. The ES is a simple logic reasoner and provides recommendations for actions to the META. The META represents high-level thinking and makes an intelligent decision for the robots. The tasks for this thesis were to implement the KNN and ES layers in Java and to supervise work done by undergraduate students on Prometheus. This was achieved using specific design criteria and extensive feedback from the project supervisor, Prof. Vybihal. Personal design criteria included using object-oriented programming principles, optimizing the system for speed and space efficiency, and maximizing code readability and testability. Continuous integration tests were created with TestNG and TravisCI and extensive documentation was written in Javadoc.
+Prometheus AI is a model of the human brain aimed at controlling multiple robots to achieve some goal. Possible application areas include environments hazardous for humans, such as in the aftermath of a nuclear power disaster, or in outer space. The model consists of four layers: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES), and the Meta Reasoner (META). The NN classifies the signals coming from the robots' sensors and sends formatted tags to the KNN. The KNN represents memory and can initiate cascaded activation of memories in the form of tags, which are passed on to the ES. The ES is a simple logic reasoner and provides recommendations for actions to the META. The META represents high-level thinking and makes an intelligent decision to either accept the recommendations from the ES or to initiate a new thinking cycle in the KNN. The tasks for this thesis were to implement the KNN and ES layers in Java and to supervise work done by undergraduate students on Prometheus. This was achieved using design criteria such as efficiency, readability and testability. Continuous integration tests were created with TestNG and TravisCI and extensive documentation was written in Javadoc.
 
 \section*{Acknowledgments}
 % If applicable, you may acknowledge people here who contributed to the project in some way but are not listed on the title page. (For example, if you received advice, data, or supervision from graduate students or others.)
@@ -109,11 +110,11 @@ The following abbreviations will be used throughout the report:
 \section{Introduction} \label{sec:intro}
 % In this section you should introduce (at a high level) the overall theme of the project, and state clearly what are the goals you are trying to achieve.  This section should also clearly convey why this project is important, what is the potential impact (applications, etc).
 
-Prometheus is an artificial intelligence system designed to control and coordinate multiple robots. All the thinking and decision-making is done by the system, which collects data from all the robots' sensors.
+Prometheus is an artificial intelligence system designed to control multiple robots to achieve some goal. All the thinking and decision-making is done by the system, which collects data from all the robots' sensors.
 
 Applications for this type of system include robots in hazardous environments, such as in outer space (Mars, Moon, etc.), in nuclear plants after a disaster, and in military zones.  The system could theoretically learn from this data in a given environment and apply its learning to new environments.
 
-The architecture of Prometheus is loosely inspired from the structure of the human brain, and is composed of the following four layers \cite{vybihal-model}: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES), and the Meta Reasoner (META), which can be seen in \autoref{model}.
+The architecture of Prometheus is loosely inspired from the structure of the human brain, and is composed of the following four layers \cite{vybihal-model}: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES), and the Meta Reasoner (META). A high-level diagram of the system can be seen in \autoref{model}.
 
 \begin{figure*}[!htb]
 	\includegraphics[width=\textwidth]{figures/ai_model.pdf}
@@ -121,9 +122,9 @@ The architecture of Prometheus is loosely inspired from the structure of the hum
 	\label{model}
 \end{figure*}
 
-The theory needed to understand these four layers will be given in \autoref{sec:background}. The assigned task will then be described in \autoref{sec:problem}. Design criteria will be discussed in \autoref{sec:design}. The description of the work done can be found in \autoref{sec:implementation}, and the results and tests will be discussed in \autoref{sec:results}. Finally, the possible future impact of this project on society and the environment will be explored in \autoref{sec:impact}.
+The scope of this thesis is to implement the KNN and ES layers of Prometheus. Therefore, more detail will be given for these layers.
 
-The scope of this thesis is primarily to implement the KNN and ES layers of Prometheus. Therefore, more detail will be given for these layers.
+The theory needed to understand these four layers will be given in \autoref{sec:background}. The assigned task will then be described in \autoref{sec:problem}. Design criteria will be discussed in \autoref{sec:design}. The description of the work done can be found in \autoref{sec:implementation}, and the results and tests will be discussed in \autoref{sec:results}. Finally, the possible future impact of this project on society and the environment will be explored in \autoref{sec:impact}.
 
 \section{Background} \label{sec:background}
 % In this section you should summarize the theory and background that you had to learn, and that you believe are necessary for the reader to understand the rest of the report.
@@ -156,15 +157,19 @@ The KNN layer is the analog to memory in the human brain. It takes in the tags p
 	\label{kn}
 \end{figure}
 
-KNs have an input tag representing some datum, and output tags representing related data. When a KN is stimulated it becomes ``excited''. Tags in the KNN can become ``active'', meaning the associated KN is excited beyond a threshold. We say that the associated KN ``fires'' in this case. For example, if the NN observes a ball and provides that information to the KNN, then a ``ball'' tag may become active in the KNN. This would excite the KN with input tag ``ball''. If that KN fires, other tags related to that observation can become active. For example, tags representing ball characteristics such as ``round object'' may become active. This tag in turn may be connected to another KN, potentially causing more activation. More details about the structure of these tags will be provided in \cref{sec:background_expert_system}, where the Expert System will be discussed.
+\subsubsection{Excitation \& Firing}
+KNs have an input tag representing some datum, and output tags representing related data. When a KN is stimulated it becomes ``excited''. Tags in the KNN can become ``active'', meaning the associated KN is excited. We say that the associated KN ``fires'' if it is excited beyond a threshold. For example, if the NN observes a ball and provides that information to the KNN, then a ``ball'' tag may become active in the KNN. This would excite the KN with input tag ``ball''. If that KN fires, other tags related to that observation can become active. For example, tags representing ball characteristics such as ``round object'' may become active. This tag in turn may be connected to another KN, potentially causing more activation. More details about the structure of these tags will be provided in \cref{sec:background_expert_system}, where the Expert System will be discussed.
 
+\subsubsection{Strength}
 There is a strength value associated with every KN which represents how much weight an activation has and therefore how quickly that node will fire. Strength can be seen as the firing predisposition of neurons in the brain as a result of learning \cite{vybihal-knowledge}. Indeed, learning can increase the synaptic strength between neurons and cause early  firing of those neurons \cite{hebb}. For example, a person who has had a bad experience with spiders would fire their fear response upon seeing a spider more quickly than one without that fear.
 
+\subsubsection{Belief}
 Every KN can have a belief value associated with it, representing how certain the KNN is that the input tag is true. In this case, the belief value would be stored within the KN itself. These belief values can come from the NN, since a neural network can associate confidence values with its classifications of objects \cite{mitchell1997machine}. When initiating a think cycle, the belief values at each stage can be multiplied with each other to produce a new confidence value, making the KNN less certain of a memory as it searches through its tree of KNs. This represents how belief changes when thinking. Indeed, some memories in the brain require a great deal of thinking to reach and, as such, can be less certain than other memories. This can lead to the recollection of false memories \cite{falsememories}.
 
 Note that the activation of a KN and the belief value associated with it are two different concepts. Indeed, a KN may be fired even if the KNN knows that it is false. This can represent an agent ``lying'' to itself or repeating a thought process it knows to be false. This is known as ``self-deception'' in humans and it has been argued that this can be used for positive mental health \cite{taylor1989positive}. In the context of Prometheus, this may help the system achieve its desired goal.
 
-Searching in the KNN represents a tag activation routine. The KNN has four ways of searching: direct, forward, backward, and lambda. Thinking in the KNN is a related concept to searching. Whereas in search input tags are provided to guide the KNN, in thinking, the KNN uses its currently active tags to activate further tags. In this way, thinking is a special case of searching, where the input tags of the search are the active tags in the KNN. The KNN has three ways of thinking: forward, backward, and lambda. The version of searching or thinking to be done by the KNN is chosen by the META. 
+\subsubsection{Search}
+Searching in the KNN represents a tag activation routine. The KNN has four ways of searching: direct, forward, backward, and lambda. Thinking in the KNN is a related concept to searching. When thinking, the KNN uses its currently active tags to activate further tags. In this way, thinking is a special case of searching, where the input tags of the search are the active tags in the KNN. The KNN has three ways of thinking: forward, backward, and lambda. The version of searching or thinking to be done by the KNN is chosen by the META. 
 
 Direct searching is a simple lookup of the desired tag and excitation of the associated KN. This is the simplest search in the KNN and can be seen in \cref{fig:direct_search}.
 
@@ -182,7 +187,7 @@ Forward searching or thinking is depicted in \autoref{think_forwards}. Firing a 
 	\label{think_forwards}
 \end{figure}
 
-Searching or thinking backward starts at the output tags of KNs, and works backwards, as can seen in \autoref{think_backwards}. It checks output tags of KNs and, if a certain ratio of them match the search input tags, the KN's input tag is activated. This ratio is known as the partial match ratio.
+Searching or thinking backward starts at the output tags of KNs, and works backwards, as can seen in \autoref{think_backwards}. It checks the output tags of a KN and, if a certain ratio of them match the search input tags, the KN's input tag is activated. This ratio is known as the partial match ratio.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/backward_search.pdf}
@@ -200,11 +205,11 @@ Lambda searching or thinking uses a combination of forward and backward, and can
 	\label{think_lambda}
 \end{figure}
 
-This type of thinking occurs in humans when using analogical reasoning to find a memory \cite{vybihal-lambda}. In essence, when a person wants to locate a memory that is not directly accessible, they will explore related memories, move their way ``backwards'' to similar concepts, and think ``forwards'' to focus in on the desired memory. For example, if one is asked where they were in 2002 on a specific date, they most likely would not remember. If they explore related dates and events in their life, however, they may be able to narrow down and extract that memory. In the context of the Prometheus system, lambda search will be attempted if all other searches fail (forward and backward).
+Lambda thinking occurs in humans when using analogical reasoning to find a memory \cite{vybihal-lambda}. In essence, when a person wants to locate a memory that is not directly accessible, they will explore related memories, move their way ``backwards'' to similar concepts, and think ``forwards'' to focus in on the desired memory. For example, if one is asked where they were in 2002 on a specific date, they most likely would not remember. If they explore related dates and events in their life, however, they may be able to narrow down and extract that memory. In the context of the Prometheus system, lambda search will be attempted if all other searches fail (forward and backward).
 
 All forms of searching or thinking can continue until there are no more tags to activate, which corresponds to natural quiescence. There can also be a fixed number of thinking cycles, which represents how much effort is being put into thinking. Indeed, in humans, thinking is done with varying degrees of effort \cite{thinking}. This number of thinking cycles also represents how deep the search will go into the KN graph, and is therefore called the ``ply'' of the search.
 
-Age represents how long it has been since a KN has been excited. The idea is that, after a KN has aged a certain amount of time, that node will be discarded, similarly to how old memories are discarded in the brain \cite{aging}. In any search in the KNN, ``young'' KNs (with a low age) are visited first.
+Age represents how long it has been since a KN has been excited. After a KN has aged a certain amount of time, that node will be discarded, similarly to how old memories are discarded in the brain \cite{aging}. In any search in the KNN, ``young'' KNs (with a low age) are visited first.
 
 The result of all forms of searching or thinking is a collection of activated tags, which are passed on to the ES.
 
@@ -212,13 +217,14 @@ The result of all forms of searching or thinking is a collection of activated ta
 
 The ES layer is a basic logic reasoner. It is not aware of its current reality or any context. It takes in the tags provided by the KNN and interprets them as either facts, recommendations or rules.
 
+\subsubsection{Facts}
 Facts are simple calculus predicates showing that something is true. Their form can be seen in \cref{eq:fact}, where $P$ is the predicate name and each $A_i$ is an argument.
 
 \begin{equation} \label{eq:fact}
 	Fact \coloneqq P(A_1, \ldots, A_n)
 \end{equation}
 
-\cref{table:fact_predicates} shows some examples fact with simple arguments and their meanings.
+\cref{table:fact_predicates} shows some example facts with simple arguments and their meanings. Note that the arguments are relevant when matching with other facts.
 
 \begin{table}[!htb]
 	\centering
@@ -237,20 +243,23 @@ Facts are simple calculus predicates showing that something is true. Their form 
 	\label{table:fact_predicates}
 \end{table}
 
-As a more concrete example, a fact argument can represent a certain measurement, like $distance = 5$ representing the robot's distance from a wall as measured by one of its sensors.
+As a concrete example, a fact argument can represent a certain measurement, e.g., $distance = 5$ representing a robot's distance from a wall as measured by one of its sensors.
 
-Recommendations represent suggestions for actions to be taken by a robot. They take on the same predicate form as Facts, as shown in \cref{eq:recommendation}. The only difference is that it is customary to prefix the predicate name with a `@' character. For example, @Turn(left) is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to actually take that action.
+\subsubsection{Recommendations}
+Recommendations represent suggestions for actions to be taken by a robot. They take on the same predicate form as Facts, as shown in \cref{eq:recommendation}. The only difference is that it is customary to prefix the predicate name with a `@' character. For example, @Turn(left) is a recommendation for a robot to turn left, if it sees a wall directly in front of it and must avoid it, for example. These are recommendations and not commands because the META can decide whether or not to perform that action.
 
 \begin{equation} \label{eq:recommendation}
 	Recommendation \coloneqq @P(A_1, \ldots, A_n)
 \end{equation}
 
+\subsubsection{Rules}
 Rules are many-to-many structures with facts as inputs and tags as outputs. This can be seen in \autoref{eq:rule}, where $m \geq 1$ and $n \geq 1$, i.e., there must be at least one input fact and one output tag. Each output tag can either be a fact or a recommendation. When all the input facts become active, the output tags become active and the rule itself is said to be active. In this way, a rule can represent a logical AND of all its input facts.
 
 \begin{equation} \label{eq:rule}
 	Rule \coloneqq Fact_1 \ldots Fact_m \rightarrow Tag_1 \ldots Tag_n
 \end{equation}
 
+\subsubsection{Thinking}
 The runtime of the ES consists of the following general steps \cite{vybihal-expert}:
 
 \begin{enumerate}
@@ -264,7 +273,7 @@ The most important part of the previous process is the thinking stage, which rep
 
 \subsection{Meta Reasoner}
 
-The META layer represents high-level reasoning in the human brain. It is aware of its environment and context, and makes decisions based on what it believes to be right. It is paranoid, and constantly checks whether the tags reported by the rest of the AI system make sense based on its expected view of the world. If it decides to make a decision, it sends a command to the actuators of the robots to decide how to move. If it is not happy with the recommendations from the ES, it may send a query back to the KNN to initiate another think cycle and generate new recommendations, as can be seen in \cref{model_labeled}.
+The META layer represents high-level reasoning in the human brain. It is aware of its environment and context, and makes decisions based on what it believes to be right. It is paranoid, and constantly checks whether the recommendations suggested by the ES make sense based on its expected view of the world. If it decides to make a decision, it sends a command to the actuators of the robots to decide how to move. If it is not happy with the recommendations from the ES, it may send a query back to the KNN to initiate another think cycle and generate new recommendations, as can be seen in \cref{model_labeled}.
 
 \begin{figure*}[!htb]
 	\includegraphics[width=\textwidth]{figures/ai_model_labeled.pdf}
@@ -280,7 +289,7 @@ With this full description of the Prometheus AI model, the system with labeled i
 \label{sec:problem}
 % In this section you should describe the problem or system you are addressing in detail. Describe the project requirements and constraints.
 
-The main task for this thesis is to construct the KNN and ES in Java. The requirements are that these layers should contain basic versions of the functionality described in \autoref{sec:background}. Another important task is to supervise the work of other undergraduate students working on Prometheus and to put systems in place to ensure a certain standard for the code. The design criteria for both these tasks will be discussed in \autoref{sec:design}, and their implementation will be discussed in \cref{sec:implementation}.
+The main task for this thesis is to construct the KNN and ES in Java. The requirement is that these layers should implement the functionality described in \autoref{sec:background}. Another important task is to supervise the work of other undergraduate students working on Prometheus and to put systems in place to ensure a certain standard for the code. The design criteria for both these tasks will be discussed in \autoref{sec:design}, and their implementation will be discussed in \cref{sec:implementation}.
 
 \section{Design}
 \label{sec:design}
@@ -290,29 +299,42 @@ The main task for this thesis is to construct the KNN and ES in Java. The requir
 A very important consideration when designing the system is speed. Since the robots may have to react very quickly to stimuli in the environment, the reasoning in the AI must be as fast as possible. This is especially true in the hazardous environments for which this system could be useful for, as specified in \autoref{sec:intro}.
 
 \subsection{Object Oriented Programming}
-Another important design choice is to leverage object-oriented programming (OOP) as much as possible. OOP allows extensive planning before even beginning to write code, which can identify any flaws in the initial design. It also allows the code to be very clean and reusable \cite{oop}. OOP principles such as polymorphism and encapsulation will be followed closely. One important OOP principle to use is abstraction. Indeed, the system should be as abstract as possible, while still performing its desired task. For instance, the system should be general enough to perform under simulations, as well as in real-life environments. It should also ideally be able to perform in vastly different environments, with varying tasks. Encapsulation can also be very useful, since each layer of the system has unique, localized functionality that does not need to be visible from the rest of the system.
+Another important design choice is to leverage object-oriented programming (OOP) as much as possible. OOP allows code to be very clean and reusable \cite{oop}. Principles such as polymorphism, encapsulation and abstraction will be followed closely. Indeed, the system should be as abstract as possible, while still performing its desired task. For instance, the system should be general enough to perform under simulations, as well as in real-life environments. It should also ideally be able to perform in vastly different real-life environments, with varying tasks. Encapsulation can also be very useful, since each layer of the system has unique, localized functionality that does not need to be visible from the rest of the system.
 
 The OOP principles of SOLID \cite{martin_2009} will also be followed:
 
 \begin{description}
-	\item[Single responsibility principle:] a class should only have a single responsibility.
+	\item[Single responsibility principle:] a class should only have a single responsibility. In particular, a class should only have one reason to change.
+	
 	\item[Open/closed principle:] a software entity's functionality can be extended without changing its source code.
-	\item[Liskov substitution principle:] a class instance can be replaced by an instance of a subtype while remaining correct.
-	\item[Interface segregation principle:] a user of an interface should not be forced to depend on unused methods.
-	\item[Dependency inversion principle:] high-level and low-level modules should depend on abstractions.
+	
+	\item[Liskov substitution principle:] a class instance can be replaced by an instance of a subtype of that class while remaining correct.
+	
+	\item[Interface segregation principle:] a user of an interface should not be forced to depend on unnecessary methods. This encourages the use of multiple client-specific interfaces.
+	
+	\item[Dependency inversion principle:] high-level and low-level modules should depend on abstractions. In particular, a high-level module does not need to know the details of implementation of a low-level module and vice-versa.
 \end{description}
 
 \subsection{Readability \& Documentation}
 The code written should be very easy to understand. This means implementing each method and class in the most intuitive way possible and providing good documentation to support the code. This is to ensure that anyone wanting to work with the code or looking to understand how the system works has an easy time doing so.
 
 \subsection{Testing}
-An important criterion is that the code be heavily tested. This includes integration tests, covering end-to-end functionality, and unit tests. The unit tests should be behavior-driven, so that a developer reading the tests can easily understand the purpose of the element being tested.
+An important criterion is that the code be heavily tested. This includes integration tests, covering end-to-end functionality, and unit tests, covering specific methods or classes. The unit tests should be behavior-driven, so that a developer reading the tests can easily understand the purpose of the element being tested.
 
 \subsection{Quality Assurance}
 With the numerous undergraduate students showing interest in working on Prometheus, there must be a system in place to ensure the quality of the code is upheld. This may include automatic testing of the code, as well as human review of code before being committed.
 
 \section{Implementation}
 \label{sec:implementation}
+
+\subsection{Package Structure}
+The \code{prometheus}, \code{tags}, \code{nn}, \code{knn}, \code{es}, \code{meta} and \code{graphing} Java packages were created. Note that the \code{nn} and \code{meta} packages are simple skeletons of the NN and META layers. For most of these packages, sub-packages named \code{api}, \code{guice} and \code{internal} were created.
+
+The \code{api} sub-package contains public classes and interfaces. Only code relevant for a user of the package should be present here.
+
+The \code{guice} sub-package contains the public Guice module to ...
+
+\todo{describe api, guice, internal}
 
 \subsection{Prometheus}
 A high-level \code{Prometheus} interface was created, and was placed in the \code{prometheus package}. Its dependencies can be seen in \cref{fig:uml_prometheus}. The use of the \code{NeuralNetwork}, \code{KnowledgeNodeNetwork}, \code{ExpertSystem} and \code{MetaReasoner} interfaces is a good example of many of the SOLID principles, like single responsibility, interfaces segregation and dependency inversion.
@@ -325,10 +347,11 @@ A high-level \code{Prometheus} interface was created, and was placed in the \cod
 
 
 \subsection{Tags}
+As described in \autoref{sec:background}, the entire system revolves around tags passed from layer to layer. For this reason, careful thought was put into the design of these tags.
 
-As described in \autoref{sec:background}, the entire system revolves around tags passed from layer to layer. For this reason, a lot of thought was put into the proper design of these tags.
+The tags need to be as general as possible. A natural choice for this structure would be a \code{String}, which would be relatively simple to pass around the system. However, these tags represent various concepts; each tag can either be a fact, a recommendation or a rule. If implemented as \code{String}s, the tags would have to be encoded on creation to represent each concept and decoded on use to retrieve the important information. This seems like a bad use of the OOP principles of Java. Furthermore, if specific functionality is needed in the future for each tag type, that can easily be implemented with a Java class.
 
-The tags need to be as general as possible. A natural choice for this structure would be a Java \code{String}, which would be relatively simple to pass around the system. However, these tags represent various concepts; each tag can either be a fact, a recommendation or a rule. If implemented as \code{Strings}, the tags would have to be encoded on creation to represent each concept and decoded on use to retrieve the important information. This seems like a bad use of the OOP principles of Java. Furthermore, if specific functionality is needed in the future for each tag type, that can easily be implemented with a Java class. For these reasons, the tags are implemented using a \code{Tag} Java class, with \code{Predicate} and \code{Rule} subclasses. The \code{Predicate} class is a superclass of the \code{Fact} and \code{Recommendation} classes, as shown in \cref{fig:uml_tags}. This is a good example of using the inheritance principle of OOP. This should also make manipulating the Tags faster, while incurring a slight memory overhead. To store these Tags in a database, they can be converted to JSON format. On read from the database, they can be easily decoded. All these classes are present in the \code{tags} package of the code.
+For these reasons, the tags are implemented using an abstract \code{Tag} class, with \code{Predicate} and \code{Rule} subclasses. The \code{Predicate} abstract class is a superclass of the \code{Fact} and \code{Recommendation} classes, as shown in \cref{fig:uml_tags}. This is a good example of using the inheritance principle of OOP. The Liskov substitution principle was also kept in mind when designing these subclasses. The class strategy should also make manipulating the Tags faster, while incurring a slight memory overhead. To store these Tags in a database, they could be converted to JSON format using a library like Google Gson. On read from the database, they could easily be decoded using the same library. All these classes are present in the \code{tags} package of the code.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/uml_tags.pdf}
@@ -343,6 +366,13 @@ The \code{Rule} class has the following important fields:
 \begin{labeling}{\code{outputPredicates}}
 	\item[\code{inputFacts}] \code{Set} of input \code{Facts}.
 	\item[\code{outputPredicates}] \code{Set} of output \code{Predicates}.
+\end{labeling}
+
+The \code{Fact} and \code{Recommendation} classes have the following fields:
+
+\begin{labeling}{\code{predicateName}}
+	\item[\code{predicateName}] \code{String} representing the predicate name.
+	\item[\code{arguments}] \code{List} of arguments to the predicate.
 \end{labeling}
 
 \subsection{Knowledge Node Network}
@@ -439,27 +469,29 @@ The \code{teach()} method parses simple ``if-then'' sentences to generate rules 
 \subsection{Visualization}
 The Java graph visualization library GraphStream was used to visualize the KNN and the process of searching or thinking through it. The graphing code created was placed in the \code{graphing} package. A UML diagram of the important classes in the \code{graphing} package can be seen in \cref{fig:uml_graphing}. A legend for reading the produced graph can be seen in \cref{fig:knn_graph_legend}.
 
-\begin{figure}[!htb]
-	\includegraphics[width=\columnwidth]{figures/uml_graphing.pdf}
-	\caption{UML diagram of the important classes in the \code{graphing} package.}
-	\label{fig:uml_graphing}
-\end{figure}
-
 \begin{figure*}[!htb]
 	\includegraphics[width=\textwidth]{figures/knn_graph_legend.pdf}
 	\caption{Legend for reading the graph produced by \code{KnnGraphVisualizer}.}
 	\label{fig:knn_graph_legend}
 \end{figure*}
 
-\subsection{Documentation}
-Extensive documentation was created in Javadoc\footnote{The Javadoc can be found here: \url{http://seanstappas.me/prometheus-ai/}}. Instructions are also provided on the README of the GitHub repository hosting the code\footnote{The GitHub repository can be found here: \url{https://github.com/seanstappas/prometheus-ai/}}.
+\begin{figure}[!htb]
+	\includegraphics[width=\columnwidth]{figures/uml_graphing.pdf}
+	\caption{UML diagram of the important classes in the \code{graphing} package.}
+	\label{fig:uml_graphing}
+\end{figure}
 
-%\begin{figure*}[!htb]
-%	\includegraphics[width=\textwidth]{figures/testKNN.pdf}
-%	\caption[Setup for the \code{testKNN()} method.]
-%	{Initial setup for the \code{testKNN()} method.}
-%	\label{testKNN}
-%\end{figure*}
+\subsection{Documentation}
+Extensive documentation was created in Javadoc\footnote{The Javadoc can be found here:\\ \url{http://seanstappas.me/prometheus-ai/}}. Instructions are also provided on the README of the GitHub repository hosting the code\footnote{The GitHub repository can be found here:\\ \url{https://github.com/seanstappas/prometheus-ai/}}.
+
+\subsection{Other Libraries}
+Many Java libraries were used in Prometheus. Since it is a Maven project, all these dependencies can be found in the \code{pom.xml} file in the root of the project directory. Maven allows dependencies to be easily added or removed in a Java project without needing to keep track of \code{jar} files.
+
+An important library that was used is Google Guice. This is the backbone for all the dependencies in the code. Guice neatly allows the implementation of various important OOP principles, like dependency inversion. Notably, the \code{es} and \code{knn} packages have associated Guice modules which are used by the high-level Prometheus module. Guice factories were also created for classes which require special constructor arguments. A diagram of the various Guice dependencies in the project can be seen in \cref{fig:guice_graph} in \cref{sec:diagrams}.
+
+The Apache Commons Lang library was also used for standardized implementations of the \code{hashCode()}, \code{equals()} and \code{toString()} methods of Java objects.
+
+The very important TestNG and Mockito libraries were used for testing and will be discussed in the next section.
 
 \begin{table*}[!htb]
 	\large
@@ -477,27 +509,6 @@ Extensive documentation was created in Javadoc\footnote{The Javadoc can be found
 	\end{tabular}
 	\label{testES}
 \end{table*}
-
-%\begin{table*}[!htb]
-%	\large
-%	\centering
-%	\caption{Test setup and activation for the ES portion of \code{testKNNandES()}.}
-%	\begin{tabular}{c | c | c | c | c} 
-%		\textbf{State} & \textbf{Ready Rules} & \textbf{Active Rules} & \specialcell{\textbf{Active} \\ \textbf{Facts}} & \specialcell{\textbf{Active} \\ \textbf{Recommendations}}  \\ \hline
-%		Initial
-%		&$(H)(I)(J)\rightarrow(\#Z)$
-%		& 
-%		& \specialcell{$(B),(C),(D)$ \\ $(E),(F),(G)$ \\ $(H),(I),(J)$}
-%		& \\ \hline
-%		
-%		Final
-%		&
-%		& $(H)(I)(J)\rightarrow(\#Z)$
-%		& \specialcell{$(B),(C),(D)$ \\ $(E),(F),(G)$ \\ $(H),(I),(J)$}
-%		& $(\#Z)$
-%	\end{tabular}
-%	\label{testKNNandES}
-%\end{table*}
 
 \section{Results \& Tests} \label{sec:results}
 All tests on the system were conducted using the TestNG framework in Java, which provides a simple and intuitive way to create assertions in tests. These tests were placed in the \code{test} directory of the project.
@@ -622,32 +633,23 @@ Possible future work would include finalizing the entire system by building the 
 
 \clearpage
 \onecolumn
-\appendix
-
-\renewcommand\thefigure{\thesection.\arabic{figure}}
-\setcounter{figure}{0}    
-
-%\section{UML Diagrams}
-%\label{sec:uml}
-
-%\begin{figure}[!htb]
-%	\centering
-%	\includegraphics[width=\columnwidth]{figures/uml_tags.pdf}
-%	\caption{UML diagram of the \code{tags} package.}
-%	\label{uml_tags}
-%\end{figure}
-
-
-%\begin{figure}[!htb]
-%	\includegraphics[width=\columnwidth]{figures/guice_graph.pdf}
-%	\caption{Guice dependency graph.}
-%	\label{fig:guice_graph}
-%\end{figure}
-
-
-\clearpage
 
 \bibliography{readings}{}
 \bibliographystyle{IEEEtran}
+
+\appendix
+\renewcommand\thefigure{\thesection.\arabic{figure}}
+\setcounter{figure}{0}
+
+\begin{landscape}    
+	\section{Diagrams}
+	\label{sec:diagrams}
+	\begin{figure}[!htb]
+		\includegraphics[width=\columnwidth]{figures/guice_graph.pdf}
+		\caption{Guice dependency graph.}
+		\label{fig:guice_graph}
+	\end{figure}
+\clearpage
+\end{landscape}
 
 \end{document}
