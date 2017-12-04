@@ -71,7 +71,7 @@
 
 \section*{Abstract}
 % The abstract is an executive summary of your project/thesis. It should provide an overview of your project/thesis by addressing the following questions. a. What is the motivation for the project/thesis? b. What are the goals of the project/thesis? c. What was achieved this semester? d. What methods were used to make those achievements? The abstract should be between 200 and 250 words long.
-Prometheus AI is a model of the human brain aimed at controlling multiple robots to achieve some goal. Possible application areas include environments hazardous for humans, such as in the aftermath of a nuclear power disaster, or in outer space. The model consists of four layers: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES), and the Meta Reasoner (META). The NN classifies the signals coming from the robots' sensors and sends formatted tags to the KNN. The KNN represents memory and can initiate cascaded activation of memories in the form of tags, which are passed on to the ES. The ES is a simple logic reasoner and provides recommendations for actions to the META. The META represents high-level thinking and makes an intelligent decision to either accept the recommendations from the ES or to initiate a new thinking cycle in the KNN. The tasks for this thesis were to implement the KNN and ES layers in Java and to supervise work done by undergraduate students on Prometheus. This was achieved using design criteria such as efficiency, readability and testability. Continuous integration tests were created with TestNG and TravisCI and extensive documentation was written in Javadoc.
+Prometheus AI is a model of the human brain aimed at controlling multiple robots to achieve some goal. Possible application areas include environments hazardous for humans, such as in the aftermath of a nuclear power disaster, or in outer space. The model consists of four layers: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES), and the Meta Reasoner (META). The NN classifies the signals coming from the robots' sensors and sends formatted tags to the KNN. The KNN represents memory and can initiate cascaded activation of memories in the form of tags, which are passed on to the ES. The ES is a simple logic reasoner and provides recommendations for actions to the META. The META represents high-level thinking and makes an intelligent decision to either accept the recommendations from the ES or to initiate a new thinking cycle in the KNN. The tasks for this thesis were to implement the KNN and ES layers in Java and to supervise work done by undergraduate students on Prometheus. This was achieved using design criteria such as efficiency, readability and testability. Continuous integration tests were created on GitHub\footnote{The GitHub repository can be found here:\\ \url{https://github.com/seanstappas/prometheus-ai/}} with TestNG and TravisCI and extensive documentation was written in Javadoc\footnote{The Javadoc can be found here:\\ \url{http://seanstappas.me/prometheus-ai/}}.
 
 \section*{Acknowledgments}
 % If applicable, you may acknowledge people here who contributed to the project in some way but are not listed on the title page. (For example, if you received advice, data, or supervision from graduate students or others.)
@@ -327,24 +327,43 @@ With the numerous undergraduate students showing interest in working on Promethe
 \section{Implementation}
 \label{sec:implementation}
 
+\subsection{Libraries}
+Prometheus is a Java Maven project. This allows all the library dependencies to be specified in a \code{pom.xml} file in the root of the project directory. Maven allows dependencies to be easily added or removed in a Java project without needing to keep track of \code{jar} files.
+
+An important library that was used is Google Guice. This is the backbone for all the dependencies in the code. Guice neatly allows the implementation of various important OOP principles, like dependency inversion. Notably, the \code{es} and \code{knn} packages have associated Guice modules which are used by the high-level Prometheus module. Guice factories were also created for classes which require special constructor arguments. A diagram of the various Guice dependencies in the project can be seen in \cref{fig:guice_graph} in \cref{sec:diagrams}.
+
+The GraphStream library was also used for graph visualization and will be discussed in \cref{sec:impl_visualization}. The Apache Commons Lang library was used for standardized implementations of the \code{hashCode()}, \code{equals()} and \code{toString()} methods of Java objects. The very important TestNG and Mockito libraries were used for testing and will be discussed in \cref{sec:results}.
+
+\subsection{Directory Structure}
+Below is a description of the contents of each top-level directory in the project.
+
+\begin{labeling}{\code{reports}}
+	\item[\code{data}] Input data files for the KNN.
+	\item[\code{docs}] Javadoc files.
+	\item[\code{graphs}] Graphs created by the graphing tools.
+	\item[\code{reports}] Reports on Prometheus.
+	\item[\code{src}] Source code.
+\end{labeling}
+
+The \code{src} directory then contains the \code{main/java/} directory containing the main Prometheus code and the \code{test/java/} directory containing tests.
+
 \subsection{Package Structure}
-The \code{prometheus}, \code{tags}, \code{nn}, \code{knn}, \code{es}, \code{meta} and \code{graphing} Java packages were created. Note that the \code{nn} and \code{meta} packages are simple skeletons of the NN and META layers. For most of these packages, sub-packages named \code{api}, \code{guice} and \code{internal} were created.
+Within the main source code directory, the \code{prometheus}, \code{tags}, \code{nn}, \code{knn}, \code{es}, \code{meta} and \code{graphing} Java packages were created. Note that the \code{nn} and \code{meta} packages are simple skeletons of the NN and META layers. For most of these packages, sub-packages named \code{api}, \code{guice} and \code{internal} were created. Below is a description of the contents each of these packages should have.
 
-The \code{api} sub-package contains public classes and interfaces. Only code relevant for a user of the package should be present here.
+\begin{labeling}{\code{internal}}
+	\item[\code{api}] Public classes and interfaces. Only code relevant for a user of the package should be present here.
+	\item[\code{guice}] Public Guice module. This module will be used by a user of the package and should install an internal Guice module.
+	\item[\code{internal}] Internal classes and interfaces. Internal code that does not concern a user is found here, as well as an internal Guice module to install internal classes.
+\end{labeling}
 
-The \code{guice} sub-package contains the public Guice module to ...
-
-\todo{describe api, guice, internal}
-
-\subsection{Prometheus}
-A high-level \code{Prometheus} interface was created, and was placed in the \code{prometheus package}. Its dependencies can be seen in \cref{fig:uml_prometheus}. The use of the \code{NeuralNetwork}, \code{KnowledgeNodeNetwork}, \code{ExpertSystem} and \code{MetaReasoner} interfaces is a good example of many of the SOLID principles, like single responsibility, interfaces segregation and dependency inversion.
+\subsection{Prometheus Interface}
+A high-level \code{Prometheus} interface was created, and was placed in the \code{prometheus} package. Its dependencies can be seen in \cref{fig:uml_prometheus}. The use of the \code{NeuralNetwork}, \code{KnowledgeNodeNetwork}, \code{ExpertSystem} and \code{MetaReasoner} interfaces is a good example of many of the SOLID principles, like single responsibility, interfaces segregation and dependency inversion. This interface allows a user to access the NN, KNN, ES and META layers via getter methods.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/uml_prometheus.pdf}
 	\caption{UML diagram of the \code{Prometheus} dependencies.}
 	\label{fig:uml_prometheus}
 \end{figure}
-
 
 \subsection{Tags}
 As described in \autoref{sec:background}, the entire system revolves around tags passed from layer to layer. For this reason, careful thought was put into the design of these tags.
@@ -432,7 +451,7 @@ There are two main choices for the implementation of aging of the KNs:
 	\item The KN's age is initialized to the current UNIX time. When a KN is about to be excited, the current UNIX time is compared to the initial one. If the difference is greater than some threshold, the KN is discarded. Otherwise, the KN's age is set to the current UNIX time. The KNs can be stored in a sorted mapping from age to KN.
 \end{enumerate}
 
-The second method from the above was chosen for the main reason that it is computationally much simpler to update a KN upon exciting it, rather than updating multiple at a time every $x$ time interval. There is a trade-off however, since the first method has a simpler storage mechanism, dealing with either incrementing an index or resetting an index to 0 at every age update. The second method has to instead keep a sorted mapping from the UNIX time to the KNs. While this is more complex, it can be relatively simply implemented with a \code{TreeMap} in Java, which is what was chosen. In this way, for each search method, the youngest KNs are excited first.
+The second method from the above was chosen for the main reason that it is computationally more efficient to update a KN upon exciting it, rather than updating multiple at a time every $x$ time interval. There is a trade-off however, since the first method has a simpler storage mechanism, dealing with either incrementing an index or resetting an index to 0 at every age update. The second method has to instead keep a sorted mapping from the UNIX time to the KNs. While this is more complex, it can be relatively simply implemented with a \code{TreeMap} in Java, which is what was chosen. In this way, for each search method, the youngest KNs are excited first.
 
 \subsection{Expert System}
 
@@ -461,19 +480,14 @@ The most important method in the \code{ExpertSystem} is \code{think()}, which im
 \end{labeling}
 
 The \code{think()} method has an associated \code{Thinker} class, whose sole purpose is to execute thinking cycles. 
+\todo{Elaborate here...}
 
 The \code{rest()} method allows the creation of new rules based on existing ones, with the associated \code{Rester} and \code{RuleMerger} classes.
 
 The \code{teach()} method parses simple ``if-then'' sentences to generate rules by using the \code{Teacher} class.
 
-\subsection{Visualization}
-The Java graph visualization library GraphStream was used to visualize the KNN and the process of searching or thinking through it. The graphing code created was placed in the \code{graphing} package. A UML diagram of the important classes in the \code{graphing} package can be seen in \cref{fig:uml_graphing}. A legend for reading the produced graph can be seen in \cref{fig:knn_graph_legend}.
-
-\begin{figure*}[!htb]
-	\includegraphics[width=\textwidth]{figures/knn_graph_legend.pdf}
-	\caption{Legend for reading the graph produced by \code{KnnGraphVisualizer}.}
-	\label{fig:knn_graph_legend}
-\end{figure*}
+\subsection{Visualization} \label{sec:impl_visualization}
+The Java graph visualization library GraphStream was used to visualize the KNN and the process of searching or thinking through it. The graphing code created was placed in the \code{graphing} package. A UML diagram of the important graphing dependencies can be seen in \cref{fig:uml_graphing}. A legend for reading the produced graph can be seen in \cref{fig:knn_graph_legend}. The small nodes represent tags and the bigger nodes represent KNs. The red nodes indicate either active tags or fires KNs. Non-fired KNs are blue. Facts are purple nodes, rules are teal and recommendations are orange. The visual tests for this graphing tool were placed in the test directory and will be discussed in \cref{sec:results}.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/uml_graphing.pdf}
@@ -481,17 +495,14 @@ The Java graph visualization library GraphStream was used to visualize the KNN a
 	\label{fig:uml_graphing}
 \end{figure}
 
+\begin{figure*}[!htb]
+	\includegraphics[width=\textwidth]{figures/knn_graph_legend.pdf}
+	\caption{Legend for reading the graph produced by \code{KnnGraphVisualizer}.}
+	\label{fig:knn_graph_legend}
+\end{figure*}
+
 \subsection{Documentation}
-Extensive documentation was created in Javadoc\footnote{The Javadoc can be found here:\\ \url{http://seanstappas.me/prometheus-ai/}}. Instructions are also provided on the README of the GitHub repository hosting the code\footnote{The GitHub repository can be found here:\\ \url{https://github.com/seanstappas/prometheus-ai/}}.
-
-\subsection{Other Libraries}
-Many Java libraries were used in Prometheus. Since it is a Maven project, all these dependencies can be found in the \code{pom.xml} file in the root of the project directory. Maven allows dependencies to be easily added or removed in a Java project without needing to keep track of \code{jar} files.
-
-An important library that was used is Google Guice. This is the backbone for all the dependencies in the code. Guice neatly allows the implementation of various important OOP principles, like dependency inversion. Notably, the \code{es} and \code{knn} packages have associated Guice modules which are used by the high-level Prometheus module. Guice factories were also created for classes which require special constructor arguments. A diagram of the various Guice dependencies in the project can be seen in \cref{fig:guice_graph} in \cref{sec:diagrams}.
-
-The Apache Commons Lang library was also used for standardized implementations of the \code{hashCode()}, \code{equals()} and \code{toString()} methods of Java objects.
-
-The very important TestNG and Mockito libraries were used for testing and will be discussed in the next section.
+Extensive documentation was created as comments in the code and converted to Javadoc. This can be found in the \code{docs} directory of the project, or hosted online\footnote{The Javadoc can be found here:\\ \url{http://seanstappas.me/prometheus-ai/}}. Instructions are also provided in the README located in the top-level directory of the project.
 
 \begin{table*}[!htb]
 	\large
@@ -513,11 +524,14 @@ The very important TestNG and Mockito libraries were used for testing and will b
 \section{Results \& Tests} \label{sec:results}
 All tests on the system were conducted using the TestNG framework in Java, which provides a simple and intuitive way to create assertions in tests. These tests were placed in the \code{test} directory of the project.
 
+\subsection{Unit Tests}
 Unit tests for individual methods and classes were constructed using Mockito, which allows easy mocking of dependencies. These tests were created in parallel with writing the functional code, to ensure proper functionality.
 
+\subsection{Integration Tests}
 Integration tests were also created to test end-to-end behavior. The test setup for an ES integration test can be seen in \autoref{testES}. The columns from left to right (ignoring State) correspond to the elements in \code{readyRules}, \code{activeRules}, \code{facts}, and \code{recommendations}, respectively. The first row corresponds to the initial setup of the ES, and the last row corresponds to the expected final state. Both the initial and final states are asserted with TestNG. This test can be found in the \code{SimpleExpertSystemTest} class of the \code{integration} package in the test directory.
 
-Some visual integration tests were carried out with the created KNN visualization tool. Visualizations of forward, backward and lambda search can be seen in \cref{fig:forward_search_test,fig:backward_search_test,fig:lambda_search_test}, respectively. Refer to \cref{fig:knn_graph_legend} for the meaning of the node colors. In these tests, a threshold of 1 was used for simplicity and the initial active tags are provided as search input.
+\subsection{Visual Tests}
+Some visual tests were carried out with the created KNN visualization tool. Visualizations of forward, backward and lambda search can be seen in \cref{fig:forward_search_test,fig:backward_search_test,fig:lambda_search_test}, respectively. Refer to \cref{fig:knn_graph_legend} for the meaning of the node colors. In these tests, a threshold of 1 was used for simplicity and the initial active tags are provided as search input.
 
 \begin{figure*}
 	\begin{subfigure}[!htb]{0.32\textwidth}
