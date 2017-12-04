@@ -71,7 +71,7 @@
 
 \section*{Abstract}
 % The abstract is an executive summary of your project/thesis. It should provide an overview of your project/thesis by addressing the following questions. a. What is the motivation for the project/thesis? b. What are the goals of the project/thesis? c. What was achieved this semester? d. What methods were used to make those achievements? The abstract should be between 200 and 250 words long.
-Prometheus AI is a model of the human brain aimed at controlling multiple robots to achieve some goal. Possible application areas include environments hazardous for humans, such as in the aftermath of a nuclear power disaster, or in outer space. The model consists of four layers: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES), and the Meta Reasoner (META). The NN classifies the signals coming from the robots' sensors and sends formatted tags to the KNN. The KNN represents memory and can initiate cascaded activation of memories in the form of tags, which are passed on to the ES. The ES is a simple logic reasoner and provides recommendations for actions to the META. The META represents high-level thinking and makes an intelligent decision to either accept the recommendations from the ES or to initiate a new thinking cycle in the KNN. The tasks for this thesis were to implement the KNN and ES layers in Java and to supervise work done by undergraduate students on Prometheus. This was achieved using design criteria such as efficiency, readability and testability. Continuous integration tests were created on GitHub\footnote{The GitHub repository can be found here:\\ \url{https://github.com/seanstappas/prometheus-ai/}} with TestNG and TravisCI and extensive documentation was written in Javadoc\footnote{The Javadoc can be found here:\\ \url{http://seanstappas.me/prometheus-ai/}}.
+Prometheus AI is a model of the human brain aimed at controlling multiple robots to achieve some goal. Possible application areas include environments hazardous for humans, such as in the aftermath of a nuclear power disaster, or in outer space. The model consists of four layers: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES), and the Meta Reasoner (META). The NN classifies the signals coming from the robots' sensors and sends formatted tags to the KNN. The KNN represents memory and can initiate cascaded activation of memories in the form of tags, which are passed on to the ES. The ES is a simple logic reasoner and provides recommendations for actions to the META. The META represents high-level thinking and makes an intelligent decision to either accept the recommendations from the ES or to initiate a new thinking cycle in the KNN. The tasks for this thesis were to implement the KNN and ES layers in Java and to supervise work done by undergraduate students on Prometheus. This was achieved using design criteria such as efficiency, readability and testability. Continuous integration tests were created on GitHub\footnote{The GitHub repository can be found here:\\ \url{https://github.com/seanstappas/prometheus-ai/}\\} with TestNG and TravisCI and extensive documentation was written in Javadoc\footnote{The Javadoc can be found here:\\ \url{http://seanstappas.me/prometheus-ai/}}.
 
 \section*{Acknowledgments}
 % If applicable, you may acknowledge people here who contributed to the project in some way but are not listed on the title page. (For example, if you received advice, data, or supervision from graduate students or others.)
@@ -101,8 +101,7 @@ The following abbreviations will be used throughout the report:
 		KNN & Knowledge Node Network \\
 		KN & Knowledge Node \\
 		ES & Expert System \\
-		META & Meta Reasoner \\
-		OOP & Object-Oriented Programming
+		META & Meta Reasoner
 	\end{tabular}
 	\label{table:abbrevations}
 \end{table}
@@ -157,7 +156,7 @@ The KNN layer is the analog to memory in the human brain. It takes in the tags p
 	\label{kn}
 \end{figure}
 
-\subsubsection{Excitation \& Firing}
+\subsubsection{Excitation and Firing}
 KNs have an input tag representing some datum, and output tags representing related data. When a KN is stimulated it becomes ``excited''. Tags in the KNN can become ``active'', meaning the associated KN is excited. We say that the associated KN ``fires'' if it is excited beyond a threshold. For example, if the NN observes a ball and provides that information to the KNN, then a ``ball'' tag may become active in the KNN. This would excite the KN with input tag ``ball''. If that KN fires, other tags related to that observation can become active. For example, tags representing ball characteristics such as ``round object'' may become active. This tag in turn may be connected to another KN, potentially causing more activation. More details about the structure of these tags will be provided in \cref{sec:background_expert_system}, where the Expert System will be discussed.
 
 \subsubsection{Strength}
@@ -315,7 +314,7 @@ The OOP principles of SOLID \cite{martin_2009} will also be followed:
 	\item[Dependency inversion principle:] high-level and low-level modules should depend on abstractions. In particular, a high-level module does not need to know the details of implementation of a low-level module and vice-versa.
 \end{description}
 
-\subsection{Readability \& Documentation}
+\subsection{Readability and Documentation}
 The code written should be very easy to understand. This means implementing each method and class in the most intuitive way possible and providing good documentation to support the code. This is to ensure that anyone wanting to work with the code or looking to understand how the system works has an easy time doing so.
 
 \subsection{Testing}
@@ -479,15 +478,14 @@ The most important method in the \code{ExpertSystem} is \code{think()}, which im
 	\item[\code{generateRule}] If \code{true}, generates a \code{Rule} based on the active \code{Fact}s and the ones activated as a result of thinking.
 \end{labeling}
 
-The \code{think()} method has an associated \code{Thinker} class, whose sole purpose is to execute thinking cycles. 
-\todo{Elaborate here...}
+The \code{think()} method has an associated \code{Thinker} class, whose sole purpose is to execute thinking cycles by using the \code{ThinkCycleExecutor} class. It does so by iterating over the ready rules in the ES and and activating those whose input facts are active.
 
-The \code{rest()} method allows the creation of new rules based on existing ones, with the associated \code{Rester} and \code{RuleMerger} classes.
+The \code{rest()} method allows the creation of new rules based on existing ones, with the associated \code{Rester} class, which in turn uses the \code{RuleMerger} classes. It merges rules when one rule implies another. For example, if we have $P(A) \rightarrow P(B)$ and $P(B) \rightarrow P(C)$, then a new rule can be created: $P(A) \rightarrow P(C)$.
 
-The \code{teach()} method parses simple ``if-then'' sentences to generate rules by using the \code{Teacher} class.
+The \code{teach()} method parses simple \emph{if-then} sentence \code{String}s to generate rules by using the \code{Teacher} class. For example, the sentence \emph{if} $P(A)$ \emph{then} $P(B)$ would be converted to a rule of the form $P(A) \rightarrow P(B)$. The currently supported words denoting rule input are \emph{if}, \emph{when}, \emph{while} and \emph{first}. The words denoting rule output are \emph{then}, \emph{next} and \emph{do}.
 
 \subsection{Visualization} \label{sec:impl_visualization}
-The Java graph visualization library GraphStream was used to visualize the KNN and the process of searching or thinking through it. The graphing code created was placed in the \code{graphing} package. A UML diagram of the important graphing dependencies can be seen in \cref{fig:uml_graphing}. A legend for reading the produced graph can be seen in \cref{fig:knn_graph_legend}. The small nodes represent tags and the bigger nodes represent KNs. The red nodes indicate either active tags or fires KNs. Non-fired KNs are blue. Facts are purple nodes, rules are teal and recommendations are orange. The visual tests for this graphing tool were placed in the test directory and will be discussed in \cref{sec:results}.
+The Java graph visualization library GraphStream was used to visualize the KNN and the process of searching or thinking through it. The graphing code created was placed in the \code{graphing} package. A UML diagram of the important graphing dependencies can be seen in \cref{fig:uml_graphing}. A legend for reading the produced graph can be seen in \cref{fig:knn_graph_legend}. The small nodes represent tags and the bigger nodes represent KNs. The red nodes indicate either active tags or fired KNs. Non-fired KNs are blue. Facts are purple, rules are teal and recommendations are orange. The visual tests for this graphing tool were placed in the test directory and will be discussed in \cref{sec:results}.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/uml_graphing.pdf}
@@ -521,17 +519,25 @@ Extensive documentation was created as comments in the code and converted to Jav
 	\label{testES}
 \end{table*}
 
-\section{Results \& Tests} \label{sec:results}
-All tests on the system were conducted using the TestNG framework in Java, which provides a simple and intuitive way to create assertions in tests. These tests were placed in the \code{test} directory of the project.
+\section{Results and Tests} \label{sec:results}
+Unit and integration tests in Prometheus were conducted using the TestNG framework in Java, which provides a simple and intuitive way to create assertions in tests. These are run in the continuous integration suite provided by Travis CI on the GitHub repository. This enforces a level of quality for the code when someone pushes a change. Some visual tests using the KNN graphing tool were also created. All tests were placed in the test directory of the project.
 
 \subsection{Unit Tests}
-Unit tests for individual methods and classes were constructed using Mockito, which allows easy mocking of dependencies. These tests were created in parallel with writing the functional code, to ensure proper functionality.
+Unit tests for individual methods and classes were constructed using Mockito, which allows easy mocking of dependencies. These tests were created in parallel with writing the functional code, to ensure proper functionality. 
+
+The unit tests are behavior-driven and written in such a way that the person reading them can easily understand the intended behavior of the element under test. The test methods follow the \code{mustAction()} naming convention. For example, the \code{RuleMergerTest} class has a \code{mustMakeEmptyRule()} method, which tests that the merger returns an empty \code{Optional} object when there are no rules to merge.
+
+The body of each unit test method has three sections: \emph{given}, \emph{when} and \emph{then}. The \emph{given} section sets up the intended return values of the dependencies mocked by Mockito, if present. The \emph{when} section executes the actual method under test. The \emph{then} section contains the TestNG assertions concerning the result of executing the method under test.
+
+The package location of each unit test mirrors the location of the class under test in the main code. For example, the \code{BackwardSearcher.java} file is located in \code{src/main/java/knn/internal/} and its unit test, \code{BackwardSearcherTest.java}, is therefore located in \code{src/test/java/knn/internal/}. This allows the unit tests to access package-private classes and methods.
 
 \subsection{Integration Tests}
-Integration tests were also created to test end-to-end behavior. The test setup for an ES integration test can be seen in \autoref{testES}. The columns from left to right (ignoring State) correspond to the elements in \code{readyRules}, \code{activeRules}, \code{facts}, and \code{recommendations}, respectively. The first row corresponds to the initial setup of the ES, and the last row corresponds to the expected final state. Both the initial and final states are asserted with TestNG. This test can be found in the \code{SimpleExpertSystemTest} class of the \code{integration} package in the test directory.
+Integration tests were also created to test end-to-end behavior. These are more high-level than unit tests and simply test input and output of methods without mocking their dependencies. All integration tests are located in \code{src/test/java/integration/}. Tests for the ES, KNN and both combined can be found here.
+
+For example, the test setup for an ES integration test can be seen in \autoref{testES}. The columns from left to right (ignoring \emph{State}) correspond to the elements in \code{readyRules}, \code{activeRules}, \code{facts}, and \code{recommendations}, respectively. The first row corresponds to the initial setup of the ES, and the last row corresponds to the expected final state. Both the initial and final states are asserted with TestNG. This test can be found in the \code{SimpleExpertSystemTest} class.
 
 \subsection{Visual Tests}
-Some visual tests were carried out with the created KNN visualization tool. Visualizations of forward, backward and lambda search can be seen in \cref{fig:forward_search_test,fig:backward_search_test,fig:lambda_search_test}, respectively. Refer to \cref{fig:knn_graph_legend} for the meaning of the node colors. In these tests, a threshold of 1 was used for simplicity and the initial active tags are provided as search input.
+Some visual tests were carried out with the created KNN visualization tool. These can be found in \code{src/test/java/graphing/}. Visualizations of forward, backward and lambda search can be seen in \cref{fig:forward_search_test,fig:backward_search_test,fig:lambda_search_test}, respectively. These tests can be found in \code{KnnSimpleForwardThinkVisualizer.java}, \code{KnnSimpleBackwardThinkVisualizer.java} and \code{KnnSimpleLambdaThinkVisualizer.java}. Refer to \cref{fig:knn_graph_legend} for the meaning of the node colors. In these tests, a threshold of 1 was used for simplicity and the initial active tags are provided as search input.
 
 \begin{figure*}
 	\begin{subfigure}[!htb]{0.32\textwidth}
@@ -619,7 +625,7 @@ As purely a software project, there are no physical materials needed to construc
 \subsection{Environmental Benefits}
 % Benefits to the environment, comparisons with more polluting technologies etc.
 
-Prometheus could be used in a context beneficial to the environment. For example, the system could be used as a tool to control robots after oil spills, where the robots could theoretically contain the problem faster than humans and thus limit the risk on the environment. There is already research being done on employing robots in this context. Indeed, MIT's Senseable City Lab has been working on Seaswarm, a system composed of a fleet of vehicles to help clean future oil spills \cite{seaswarm}. An AI like Prometheus to control a swarm of robots like this could be very valuable. 
+Prometheus could be used in a context beneficial to the environment. For example, the system could be used as a tool to control robots after oil spills, where the robots could theoretically safely contain the problem faster than humans and thus limit the risk on the environment. There is already research being done on employing robots in this context. Indeed, MIT's Senseable City Lab has been working on Seaswarm, a system composed of a fleet of vehicles to help clean future oil spills \cite{seaswarm}. An AI like Prometheus to control a swarm of robots like this could be very valuable. 
 
 \subsection{Safety and Risk}
 % To you undertaking the project, as well as to any potential users of the solution once it is finished.
@@ -634,7 +640,7 @@ In the very long term, there are concerns with the possibility that an AI system
 \subsection{Benefits to Society}
 % Quality of life, economic benefits, etc.
 
-This type of system could be extremely useful in many contexts in society. For instance, the system could be used to send and control robots in an area that would otherwise be very dangerous for humans. For example, robots are often used in the aftermath of nuclear disasters to prevent the unnecessary loss of human life. Indeed, even in the Chernobyl nuclear disaster, the Soviet authorities employed the use of robots to avoid losses of human life \cite{chernobyl}. With an AI like Prometheus, the robots could be controlled in an intelligent manner.
+This type of system could be extremely useful in many contexts in society. For instance, the system could be used to send and control robots in an area that would otherwise be very dangerous for humans. For example, robots are often used in the aftermath of nuclear disasters to prevent the unnecessary loss of human life. Indeed, in the Chernobyl nuclear disaster, the Soviet authorities employed the use of robots to avoid losses of human life \cite{chernobyl}. With an AI like Prometheus, the robots could be controlled in an intelligent manner.
 
 The system could also be used to further space exploration, with an AI controlling multiple robots exploring the surface of Mars, for instance. The value of AI in this context has been clearly shown, with the Mars Curiosity rover recently being upgraded to have its own AI system using computer vision to identify rocks \cite{rover}. This system can therefore help further important cutting-edge research in space exploration.
 
@@ -655,7 +661,8 @@ Possible future work would include finalizing the entire system by building the 
 \renewcommand\thefigure{\thesection.\arabic{figure}}
 \setcounter{figure}{0}
 
-\begin{landscape}    
+\clearpage
+%\begin{landscape}   
 	\section{Diagrams}
 	\label{sec:diagrams}
 	\begin{figure}[!htb]
@@ -663,7 +670,6 @@ Possible future work would include finalizing the entire system by building the 
 		\caption{Guice dependency graph.}
 		\label{fig:guice_graph}
 	\end{figure}
-\clearpage
-\end{landscape}
+%\end{landscape}
 
 \end{document}
