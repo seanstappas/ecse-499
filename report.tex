@@ -208,7 +208,9 @@ Lambda thinking occurs in humans when using analogical reasoning to find a memor
 
 All forms of searching or thinking can continue until there are no more tags to activate, which corresponds to natural quiescence. There can also be a fixed number of thinking cycles, which represents how much effort is being put into thinking. Indeed, in humans, thinking is done with varying degrees of effort \cite{thinking}. This number of thinking cycles also represents how deep the search will go into the KN graph and is therefore called the ``ply'' of the search.
 
-Age represents how long it has been since a KN has been excited. After a KN has aged a certain amount of time, that node will be discarded, similarly to how old memories are discarded in the brain \cite{aging}. In any search in the KNN, ``young'' KNs (with a low age) are visited first.
+\subsubsection{Aging}
+
+Age represents how long it has been since a KN has been excited. After a KN has aged a certain amount of time, that node will be discarded, similarly to how old memories are discarded in the brain \cite{aging}. In backward search, ``young'' KNs (with a low age) are visited first. Here, there can also be an age threshold such that the KNN only searches through KNs below a certain age.
 
 The result of all forms of searching or thinking is a collection of activated tags, which are passed on to the ES.
 
@@ -392,6 +394,8 @@ The \code{Fact} and \code{Recommendation} classes have the following fields:
 	\item[\code{predicateName}] \code{String} representing the predicate name.
 	\item[\code{arguments}] \code{List} of arguments to the predicate.
 \end{labeling}
+
+It is also very important that these tag objects be immutable by a user after creation, since they will be used as keys to map to KNs in the KNN, as will be discussed in the next section. To achieve this, the objects may have getter methods, but do not have any setter methods. In addition, if an object must return a collection like a \code{List}, it is made immutable to the user by methods such as \code{Collections.immutableList()}.
 
 \subsection{Knowledge Node Network}
 
