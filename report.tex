@@ -331,7 +331,7 @@ Prometheus is a Java Maven project. This allows all the library dependencies to 
 
 An important library that was used is Google Guice. This is the backbone for all the dependencies in the code. Guice neatly allows the implementation of various important OOP principles, like dependency inversion. Notably, the \code{es} and \code{knn} packages have associated Guice modules which are used by the high-level Prometheus module. Guice factories were also created for classes which require special constructor arguments. A diagram of the various Guice dependencies in the project can be seen in \cref{fig:guice_graph} in \cref{sec:diagrams}.
 
-The GraphStream library was also used for graph visualization and will be discussed in \cref{sec:impl_visualization}. The Apache Commons Lang library was used for standardized implementations of the \code{hashCode()}, \code{equals()} and \code{toString()} methods of Java objects. The very important TestNG and Mockito libraries were used for testing and will be discussed in \cref{sec:results}.
+The GraphStream library was also used for graph visualization and will be discussed in \cref{sec:impl_visualization}. The Apache Commons Lang library was used for standardized implementations of the \code{hashCode()}, \code{equals()}, \code{compareTo()} and \code{toString()} methods of Java objects. The very important TestNG and Mockito libraries were used for testing and will be discussed in \cref{sec:results}.
 
 \subsection{Directory Structure}
 Below is a description of the contents of each top-level directory in the project.
@@ -451,7 +451,9 @@ There are two main choices for the implementation of aging of the KNs:
 	\item The KN's age is initialized to the current UNIX time. When a KN is about to be excited, the current UNIX time is compared to the last stored one. If the difference is greater than some threshold, the KN is discarded. Otherwise, the KN's age is set to the current UNIX time. The KNs can be stored in a sorted mapping from age to KN.
 \end{enumerate}
 
-The second method from the above was chosen for the main reason that it is computationally more efficient to update a KN upon exciting it, rather than updating multiple at a time every $x$ time interval. There is a trade-off however, since the first method has a simpler storage mechanism, dealing with either incrementing an index or resetting an index to 0 at every age update. The second method has to instead keep a sorted mapping from the UNIX time to the KNs. While this is more complex, it can be relatively simply implemented with a \code{TreeMap} in Java, which is what was chosen. In this way, for each search method, the youngest KNs are excited first.
+The second method from the above was chosen for the main reason that it is computationally more efficient to update a KN upon exciting it, rather than updating multiple at a time every $x$ time interval. There is a trade-off however, since the first method has a simpler storage mechanism, dealing with either incrementing an index or resetting an index to 0 at every age update. The second method has to instead keep a sorted mapping from the UNIX time to the KNs. While this is more complex, it can be relatively simply implemented with a \code{TreeSet} in Java, which is what was chosen. In this way, for each search method, the youngest KNs are excited first.
+
+To accomplish this, a new \code{TreeSet} field was created in the KNN named \code{ageSortedKNs}. This is a set of KNs sorted by their age. It is used in backward search to iterate over the KNs, and in direct search to update the age. There is also an associated age limit in the backward searcher named \code{backwardSearchAgeLimit} which can be set by the user. While iterating over the KNs, if any KN's age is greater than this threshold, the current ply's search terminates.
 
 \subsection{Expert System}
 
