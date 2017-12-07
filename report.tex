@@ -397,7 +397,7 @@ The \code{Fact} and \code{Recommendation} classes have the following fields:
 	\item[\code{arguments}] \code{List} of arguments to the predicate.
 \end{labeling}
 
-It is also very important that these tag objects be immutable by a user after creation, since they will be used as keys to map to KNs in the KNN, as will be discussed in the next section. To achieve this, the objects may have getter methods, but do not have any setter methods. In addition, if an object must return a collection like a \code{List}, it is made immutable to the user by methods such as \code{Collections.immutableList()}.
+It is also very important that these tag objects be immutable by a user after creation, since they will be used as keys to map to KNs in the KNN, as will be discussed in the next section. To achieve this, the objects may have getter methods, but do not have any setter methods. In addition, if an object must return a collection like a \code{List}, it is made immutable to the user by methods such as \code{Collections.immutableList()}. The \code{Fact}, \code{Recommendation} and \code{Rule} classes were also made \code{final}, since it is not expected that these should be sub-classed. This is a good example of the open-closed principle.
 
 \subsection{Knowledge Node Network}
 
@@ -551,7 +551,7 @@ Some visual tests were carried out with the created KNN visualization tool. Thes
 \subsection{Quality Assurance}
 All the unit tests and integration tests are run in the continuous integration suite provided by Travis CI\footnote{The Travis CI builds can be found here:\\ \url{https://travis-ci.com/seanstappas/prometheus-ai} \\} on the GitHub repository\footnote{The GitHub repository can be found here:\\ \url{https://github.com/seanstappas/prometheus-ai/}}. This enforces a level of quality for the code when someone pushes a change.
 
-The Travis CI builds also ensure that are the dependencies are loaded properly, and also executes some standard code quality checks. These include \code{FindBugs} for finding bugs in the code, \code{checkstyle} for enforcing the Java Sun code style and \code{jacoco} for enforcing a certain test coverage.
+The Travis CI builds also ensure that are the dependencies are loaded properly and that some standard code quality checks are passed. These include \code{FindBugs} for finding bugs in the code, \code{checkstyle} for enforcing a code style and \code{jacoco} for enforcing \SI{90}{\percent} code coverage with tests. The \code{checkstyle} configuration is inspired from the Java Sun style and can be found in the \code{checkstyle.xml} file in the root of the project.
 
 \begin{figure*}
 	\begin{subfigure}[!htb]{0.32\textwidth}
