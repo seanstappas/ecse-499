@@ -71,7 +71,7 @@
 
 \section*{Abstract}
 % The abstract is an executive summary of your project/thesis. It should provide an overview of your project/thesis by addressing the following questions. a. What is the motivation for the project/thesis? b. What are the goals of the project/thesis? c. What was achieved this semester? d. What methods were used to make those achievements? The abstract should be between 200 and 250 words long.
-Prometheus AI is a model of the human brain aimed at controlling multiple robots to achieve some goal. Possible application areas include environments hazardous for humans, such as in the aftermath of a nuclear power disaster or in outer space. The model consists of four layers: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES) and the Meta Reasoner (META). The NN classifies the signals coming from the robots' sensors and sends formatted tags to the KNN. The KNN represents memory and can initiate cascaded activation of memories in the form of tags, which are passed on to the ES. The ES is a simple logic reasoner and provides recommendations for actions to the META. The META represents high-level thinking and makes an intelligent decision to either accept the recommendations from the ES or to initiate a new thinking cycle in the KNN. The tasks for this thesis were to implement the KNN and ES layers in Java and to supervise work done by undergraduate students on Prometheus. This was achieved using design criteria such as efficiency, readability and testability. Continuous integration tests were created on GitHub\footnote{The GitHub repository can be found here:\\ \url{https://github.com/seanstappas/prometheus-ai/}\\} with TestNG and TravisCI\footnote{The Travis CI builds can be found here:\\ \url{https://travis-ci.com/seanstappas/prometheus-ai}\\} and extensive documentation was written in Javadoc\footnote{The Javadoc can be found here:\\ \url{http://seanstappas.me/prometheus-ai/}}.
+Prometheus AI is a model of the human brain aimed at controlling multiple robots to achieve some goal. Possible application areas include environments hazardous for humans, such as in the aftermath of a nuclear power disaster or in outer space. The model consists of four layers: the Neural Network (NN), the Knowledge Node Network (KNN), the Expert System (ES) and the Meta Reasoner (META). The NN classifies the signals coming from the robots' sensors and sends formatted tags to the KNN. The KNN represents memory and can initiate cascaded activation of memories in the form of tags, which are passed on to the ES. The ES is a simple logic reasoner and provides recommendations for actions to the META. The META represents high-level thinking and makes an intelligent decision to either accept the recommendations from the ES or to initiate a new thinking cycle in the KNN. The tasks for this thesis were to implement the KNN and ES layers in Java and to supervise work done by undergraduate students on Prometheus. This was achieved using design criteria such as efficiency, readability and testability. Continuous integration tests were created on GitHub\footnote{The GitHub repository can be found here:\\ \url{https://github.com/seanstappas/prometheus-ai/}\\} with TestNG and TravisCI\footnote{The Travis CI builds can be found here:\\ \url{https://travis-ci.org/seanstappas/prometheus-ai}\\} and extensive documentation was written in Javadoc\footnote{The Javadoc can be found here:\\ \url{http://seanstappas.me/prometheus-ai/}}.
 
 \section*{Acknowledgments}
 % If applicable, you may acknowledge people here who contributed to the project in some way but are not listed on the title page. (For example, if you received advice, data, or supervision from graduate students or others.)
@@ -548,11 +548,6 @@ For example, the test setup for an ES integration test can be seen in \autoref{t
 \subsection{Visual Tests}
 Some visual tests were carried out with the created KNN visualization tool. These can be found in \code{src/test/java/graphing/}. Visualizations of forward, backward and lambda search can be seen in \cref{fig:forward_search_test,fig:backward_search_test,fig:lambda_search_test}. These tests can be found in \code{KnnSimpleForwardThinkVisualizer.java}, \code{KnnSimpleBackwardThinkVisualizer.java} and \code{KnnSimpleLambdaThinkVisualizer.java}. Refer to \cref{fig:knn_graph_legend} for the meaning of the node colors. In these tests, a threshold of 1 was used for simplicity and the initial active tags are provided as search input.
 
-\subsection{Quality Assurance}
-All the unit tests and integration tests are run in the continuous integration suite provided by Travis CI\footnote{The Travis CI builds can be found here:\\ \url{https://travis-ci.com/seanstappas/prometheus-ai} \\} on the GitHub repository\footnote{The GitHub repository can be found here:\\ \url{https://github.com/seanstappas/prometheus-ai/}}. This enforces a level of quality for the code when someone pushes a change.
-
-The Travis CI builds also ensure that are the dependencies are loaded properly and that some standard code quality checks are passed. These include \code{FindBugs} for finding bugs in the code, \code{checkstyle} for enforcing a code style and \code{jacoco} for enforcing \SI{90}{\percent} code coverage with tests. The \code{checkstyle} configuration is inspired from the Java Sun style and can be found in the \code{checkstyle.xml} file in the root of the project.
-
 \begin{figure*}
 	\begin{subfigure}[!htb]{0.32\textwidth}
 		\centering
@@ -624,7 +619,28 @@ The Travis CI builds also ensure that are the dependencies are loaded properly a
 	\end{subfigure}
 	\caption{Lambda search visualization in the KNN.}
 	\label{fig:lambda_search_test}
-\end{figure*} 
+\end{figure*}
+
+\subsection{Quality Assurance}
+
+To ensure a level of quality in the Prometheus code, a continuous integration build runs at every push to the GitHub repository\footnote{The GitHub repository can be found here:\\ \url{https://github.com/seanstappas/prometheus-ai/}} hosting the code. This is done with Travis CI\footnote{The Travis CI builds can be viewed here:\\ \url{https://travis-ci.org/seanstappas/prometheus-ai}}.
+
+Many steps are run during these builds, including running all the unit tests and integration tests. If any of these steps fail, the build itself fails. Here are the general steps of each build:
+
+\begin{enumerate}
+	\item Download and install all library dependencies.
+	\item Compile the Prometheus project.
+	\item Run all unit tests and integration tests.
+	\item Check that test coverage ratios are being met (with \code{jacoco}).
+	\item Check that the style of the code is correct (with \code{checkstyle}).
+	\item Check for any common bugs (with \code{FindBugs}).
+\end{enumerate}
+
+The \code{jacoco} library enforces that a certain minimum ratio of the main Prometheus code is covered by tests. Coverage can be defined in terms of byte code instructions, lines, methods and classes. The minimum ratios for these types are \SI{85}{\percent}, \SI{85}{\percent}, \SI{90}{\percent} and \SI{95}{\percent}, respectively. These are specified in the \code{pom.xml} file in the root directory.
+
+The \code{checkstyle} library enforces that the code conforms to a certain style. The style used for Prometheus is inspired from the Java Sun code style and is specified in the \code{checkstyle.xml} in the root directory.
+
+Finally, the \code{FindBugs} library looks for common bugs in Java code. The full list of these bugs can be found on the library website.
 
 \section{Impact on Society and the Environment}
 \label{sec:impact}
