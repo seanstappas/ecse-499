@@ -337,7 +337,7 @@ With the numerous undergraduate students showing interest in working on Promethe
 \subsection{Libraries}
 Prometheus is a Java Maven project. This allows all the library dependencies to be specified in a \code{pom.xml} file in the root of the project directory. Maven allows dependencies to be easily added or removed in a Java project without needing to keep track of \code{jar} files.
 
-An important library that was used is Google Guice. This is the backbone for all the dependencies in the code. Guice neatly allows the implementation of various important OOP principles, like dependency inversion. Notably, the \code{es} and \code{knn} packages have associated Guice modules which are used by the high-level Prometheus module. Guice factories were also created for classes which require special constructor arguments. A diagram of the various Guice dependencies in the project can be seen in \cref{fig:guice_graph} in \cref{sec:diagrams}.
+An important library that was used is Google Guice. This is the backbone for all the dependencies in the code. Guice neatly allows the implementation of various important OOP principles, like dependency inversion. Notably, the \code{es} and \code{knn} packages have associated Guice modules which are used by the high-level Prometheus module. Guice factories were also created for classes which require special constructor arguments.
 
 The GraphStream library was also used for graph visualization and will be discussed in \cref{sec:impl_visualization}. The Apache Commons Lang library was used for standardized implementations of the \code{hashCode()}, \code{equals()}, \code{compareTo()} and \code{toString()} methods of Java objects. The very important TestNG and Mockito libraries were used for testing and will be discussed in \cref{sec:results}.
 
@@ -497,13 +497,13 @@ The most important method in the \code{ExpertSystem} is \code{think()}, which im
 
 The \code{think()} method has an associated \code{Thinker} class, whose sole purpose is to execute thinking cycles by using the \code{ThinkCycleExecutor} class. It does so by iterating over the ready rules in the ES and and activating those whose input facts are active.
 
-The \code{rest()} method allows the creation of new rules based on existing ones, with the associated \code{Rester} class, which in turn uses the \code{RuleMerger} classes. It merges rules when one rule implies another. For example, if we have $P(A) \rightarrow P(B)$ and $P(B) \rightarrow P(C)$, then a new rule can be created: $P(A) \rightarrow P(C)$.s
-
 \begin{figure*}[!htb]
 	\includegraphics[width=\textwidth]{figures/knn_graph_legend.pdf}
 	\caption{Legend for reading the graph produced by \code{KnnGraphVisualizer}.}
 	\label{fig:knn_graph_legend}
 \end{figure*}
+
+The \code{rest()} method allows the creation of new rules based on existing ones, with the associated \code{Rester} class, which in turn uses the \code{RuleMerger} classes. It merges rules when one rule implies another. For example, if we have $P(A) \rightarrow P(B)$ and $P(B) \rightarrow P(C)$, then a new rule can be created: $P(A) \rightarrow P(C)$.
 
 The \code{teach()} method parses simple \emph{if-then} sentence \code{String}s to generate rules by using the \code{Teacher} class. For example, the sentence \emph{if} $P(A)$ \emph{then} $P(B)$ would be converted to a rule of the form $P(A) \rightarrow P(B)$. The currently supported words denoting rule input are \emph{if}, \emph{when}, \emph{while} and \emph{first}. The words denoting rule output are \emph{then}, \emph{next} and \emph{do}.
 
@@ -695,19 +695,19 @@ Possible future work would include finalizing the entire system by building the 
 \bibliography{readings}{}
 \bibliographystyle{IEEEtran}
 
-\appendix
-\renewcommand\thefigure{\thesection.\arabic{figure}}
-\setcounter{figure}{0}
+%\appendix
+%\renewcommand\thefigure{\thesection.\arabic{figure}}
+%\setcounter{figure}{0}
 
-\clearpage
+%\clearpage
 %\begin{landscape}   
-	\section{Diagrams}
-	\label{sec:diagrams}
-	\begin{figure}[!htb]
-		\includegraphics[width=\columnwidth]{figures/guice_graph.pdf}
-		\caption{Guice dependency graph.}
-		\label{fig:guice_graph}
-	\end{figure}
+%	\section{Diagrams}
+%	\label{sec:diagrams}
+%	\begin{figure}[!htb]
+%		\includegraphics[width=\columnwidth]{figures/guice_graph.pdf}
+%		\caption{Guice dependency graph.}
+%		\label{fig:guice_graph}
+%	\end{figure}
 %\end{landscape}
 
 \end{document}
