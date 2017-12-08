@@ -157,7 +157,7 @@ The KNN layer is the analog to memory in the human brain. It takes in the tags p
 \end{figure}
 
 \subsubsection{Excitation and Firing}
-KNs have an input tag representing some datum and output tags representing related data. When a KN is stimulated it becomes ``excited''. Tags in the KNN can become ``active'', potentially exciting the associated KN. We say that the associated KN ``fires'' if it is excited beyond a threshold. For example, if the NN observes a ball and provides that information to the KNN, then a ``ball'' tag may become active in the KNN. This would excite the KN with input tag ``ball''. If that KN fires, other tags related to that observation can become active. For example, tags representing ball characteristics such as ``round object'' may become active. This tag in turn may be connected to another KN, potentially causing more activation. More details about the structure of these tags will be provided in \cref{sec:background_expert_system}, where the Expert System will be discussed.
+KNs have an input tag representing some datum and output tags representing related data. When a KN is stimulated it becomes ``excited''. Tags in the KNN can become ``active'', potentially exciting the associated KN. We say that the associated KN ``fires'' if it is excited beyond a threshold. For example, if the NN observes a ball and provides that information to the KNN, then a ``ball'' tag may become active in the KNN. This could excite the KN with input tag ``ball''. If that KN fires, other tags related to that observation can become active. For example, tags representing ball characteristics such as ``round object'' may become active. This tag in turn may be connected to another KN, potentially causing more activation. This description of cascaded activation corresponds to forward search and will be described in \cref{sec:background_knn_search}. More details about the structure of the tags will be provided in \cref{sec:background_expert_system}, where the Expert System will be discussed.
 
 \subsubsection{Strength}
 There is a strength value associated with every KN which represents how much weight an activation has and therefore how quickly that node will fire. Strength can be seen as the firing predisposition of neurons in the brain as a result of learning \cite{vybihal-knowledge}. Indeed, learning can increase the synaptic strength between neurons and cause early  firing of those neurons \cite{hebb}. For example, a person who has had a bad experience with spiders would fire their fear response upon seeing a spider more quickly than one without that fear.
@@ -172,7 +172,7 @@ Note that the activation of a KN and the belief value associated with it are two
 \subsubsection{Search}
 \label{sec:background_knn_search}
 
-Searching in the KNN represents a tag activation routine. The KNN has four ways of searching: direct, forward, backward and lambda. Thinking in the KNN is a related concept to searching. When thinking, the KNN uses its currently active tags to activate further tags. In this way, thinking is a special case of searching, where the input tags of the search are the active tags in the KNN. The KNN has three ways of thinking: forward, backward and lambda. The version of searching or thinking to be done by the KNN is chosen by the META. 
+Searching in the KNN represents a tag activation routine. Each searching method takes as input a set of tags and outputs activated tags related to those tags. The KNN has four ways of searching: direct, forward, backward and lambda. Thinking in the KNN is a related concept to searching. When thinking, the KNN uses its currently active tags to activate further tags. In this way, thinking is a special case of searching, where the input tags of the search are the active tags in the KNN. The KNN has three ways of thinking: forward, backward and lambda. The version of searching or thinking to be done by the KNN is chosen by the META. 
 
 Direct searching is a simple lookup of the desired tag and excitation of the associated KN. This is the simplest search in the KNN and can be seen in \cref{fig:direct_search}.
 
@@ -200,7 +200,7 @@ Searching or thinking backward starts at the output tags of KNs and works backwa
 
 The partial match ratio relates to the extent to which the KNN believes the tag associated with that node to be true. As a concrete example, if you observe an object that has four wheels, seats and a steering wheel, how confident are you that that object is a car? Realistically, humans will often classify what they observe with some uncertainty \cite{uncertainty} and this can be represented with backwards thinking. This type of thinking occurs constantly in the background in humans \cite{vybihal-knowledge}.
 
-Lambda searching or thinking uses a combination of forward and backward. It can can be seen in \autoref{think_lambda}. It is called ``lambda'' because the shape of the thinking trajectory resembles a Greek uppercase lambda ($\Lambda$). It first looks at output tags of KNs and propagates activation backwards, similar to backward search. After a certain amount of nodes are fired, it will then start activating forwards, similar to forward search. An interesting question is how far backwards should lambda thinking go before starting to cascade forwards? This relates to how general one wants to explore before searching for a more specific value and can be implemented with a user-specified search ply.
+Lambda searching or thinking uses a combination of forward and backward. It can be seen in \autoref{think_lambda}. It is called ``lambda'' because the shape of the thinking trajectory resembles a Greek uppercase lambda ($\Lambda$). It first looks at output tags of KNs and propagates activation backwards, similar to backward search. After a certain amount of nodes are fired, it will then start activating forwards, similar to forward search. An interesting question is how far backwards should lambda thinking go before starting to cascade forwards? This relates to how general one wants to explore before searching for a more specific value and can be implemented with a user-specified search ply.
 
 \begin{figure}[!htb]
 	\includegraphics[width=\columnwidth]{figures/lambda_search.pdf}
@@ -296,7 +296,7 @@ With this full description of the Prometheus AI model, the system with labeled i
 \label{sec:problem}
 % In this section you should describe the problem or system you are addressing in detail. Describe the project requirements and constraints.
 
-The main task for this thesis is to construct the KNN and ES in Java. The requirement is that these layers should implement the functionality described in \autoref{sec:background}. Another important task is to supervise the work of other undergraduate students working on Prometheus and to put systems in place to ensure a certain standard for the code. The design criteria for both these tasks will be discussed in \autoref{sec:design} and their implementation will be discussed in \cref{sec:implementation}.
+The main task for this thesis is to construct the KNN and ES in Java. The requirement is that these layers should implement the functionality described in \autoref{sec:background}. Another important task is to supervise the work of other undergraduate students working on Prometheus and to put systems in place to ensure a certain standard for the code. The design criteria for both these tasks will be discussed in \autoref{sec:design} and their implementation will be discussed in \cref{sec:implementation,sec:results}.
 
 \section{Design}
 \label{sec:design}
@@ -329,15 +329,15 @@ The code written should be very easy to understand. This means implementing each
 An important criterion is that the code be heavily tested. This includes integration tests, covering end-to-end functionality, and unit tests, covering specific methods or classes. The unit tests should be behavior-driven, so that a developer reading the tests can easily understand the purpose of the element being tested.
 
 \subsection{Quality Assurance}
-With the numerous undergraduate students showing interest in working on Prometheus, there must be a system in place to ensure the quality of the code is upheld. This may include automatic testing of the code, as well as human review of code before being committed.
+With the numerous undergraduate students showing interest in working on Prometheus, there must be a system in place to ensure the quality of the code is upheld. The implementation of this system will be discussed in \cref{sec:results_qa}.
 
 \section{Implementation}
 \label{sec:implementation}
 
 \subsection{Libraries}
-Prometheus is a Java Maven project. This allows all the library dependencies to be specified in a \code{pom.xml} file in the root of the project directory. Maven allows dependencies to be easily added or removed in a Java project without needing to keep track of \code{jar} files.
+Prometheus is a Java Maven project. This allows all the library dependencies to be specified in a \code{pom.xml} file in the root directory of the project. Maven allows dependencies to be easily added or removed in a Java project without needing to keep track of \code{jar} files.
 
-An important library that was used is Google Guice. This is the backbone for all the dependencies in the code. Guice neatly allows the implementation of various important OOP principles, like dependency inversion. Notably, the \code{es} and \code{knn} packages have associated Guice modules which are used by the high-level Prometheus module. Guice factories were also created for classes which require special constructor arguments.
+An important library that was used is Google Guice. This is the backbone for all the dependencies in the code. Guice neatly allows the implementation of various important OOP principles like dependency inversion. Notably, the \code{es} and \code{knn} packages have associated Guice modules which are used by the high-level Prometheus module. Guice factories were also created for classes which require special constructor arguments.
 
 The GraphStream library was also used for graph visualization and will be discussed in \cref{sec:impl_visualization}. The Apache Commons Lang library was used for standardized implementations of the \code{hashCode()}, \code{equals()}, \code{compareTo()} and \code{toString()} methods of Java objects. The very important TestNG and Mockito libraries were used for testing and will be discussed in \cref{sec:results}.
 
@@ -465,7 +465,9 @@ The aging of KNs described in \cref{sec:background_knn_age} was also implemented
 	\item The KN's age is initialized to 0 and the current time is stored as a timestamp. When a KN is about to be excited, the current timestamp is compared to the last stored one. If the difference is greater than some threshold, the KN is discarded. Otherwise, the KN's age is set to the difference between the current timestamp and the last stored one. The stored timestamp is also updated. The KNs can be stored in a sorted mapping from age to KN.
 \end{enumerate}
 
-The second method from the above was chosen for the main reason that it is computationally more efficient to update a KN upon exciting it, rather than updating every KN simultaneously every $t$ time interval. There is a trade-off, however, since the first method has a simpler storage mechanism, dealing with either incrementing an index or resetting an index to 0 at every age update. The second method has to instead keep a sorted mapping from age to the KNs. While this is more complex, it can be relatively simply implemented with a \code{TreeSet} in Java, which is what was chosen.
+The second method from the above was chosen for the main reason that it is computationally more efficient to update a KN upon exciting it, rather than updating every KN simultaneously every $t$ time interval. There is a trade-off, however, since the first method has a simpler storage mechanism, dealing with either incrementing an index or resetting an index to 0 at every age update. The second method has to instead keep a sorted mapping from age to the KNs. While this is more complex, it can be relatively simply implemented with a \code{TreeSet} in Java, which is what was chosen. 
+
+The \code{TreeSet} has the nice property of $O(logN)$ time complexity for updates, where $N$ is the number of KNs. This update would occur every time a KN is excited. During backward search, iterating over the already sorted KNs would have a time complexity of $O(N)$. This is better than sorting the tags before every backward search, which would have a complexity of $O(NlogN)$.
 
 To accomplish this, a new \code{TreeSet} field was created in the KNN named \code{ageSortedKNs}. This is a set of KNs sorted by their age. It is used in backward search to iterate over the KNs from youngest to oldest, and in direct search to update the age. There is also an associated age limit in the backward searcher named \code{backwardSearchAgeLimit} which can be set by the user. While iterating over the KNs, if any KN's age is greater than this threshold, the current ply's search terminates.
 
@@ -488,6 +490,12 @@ The ES layer is based around the \code{ExpertSystem} interface. Its implementati
 	\item[\code{recommendations}] \code{HashSet} of active \code{Recommendations}.
 \end{labeling}
 
+\begin{figure*}[!htb]
+	\includegraphics[width=\textwidth]{figures/knn_graph_legend.pdf}
+	\caption{Legend for reading the graph produced by \code{KnnGraphVisualizer}.}
+	\label{fig:knn_graph_legend}
+\end{figure*}
+
 The most important method in the \code{ExpertSystem} is \code{think()}, which implements the functionality described in \cref{sec:background_es_think}. It has the following parameters:
 
 \begin{labeling}{\code{generateRule}}
@@ -496,12 +504,6 @@ The most important method in the \code{ExpertSystem} is \code{think()}, which im
 \end{labeling}
 
 The \code{think()} method has an associated \code{Thinker} class, whose sole purpose is to execute thinking cycles by using the \code{ThinkCycleExecutor} class. It does so by iterating over the ready rules in the ES and and activating those whose input facts are active.
-
-\begin{figure*}[!htb]
-	\includegraphics[width=\textwidth]{figures/knn_graph_legend.pdf}
-	\caption{Legend for reading the graph produced by \code{KnnGraphVisualizer}.}
-	\label{fig:knn_graph_legend}
-\end{figure*}
 
 The \code{rest()} method allows the creation of new rules based on existing ones, with the associated \code{Rester} class, which in turn uses the \code{RuleMerger} classes. It merges rules when one rule implies another. For example, if we have $P(A) \rightarrow P(B)$ and $P(B) \rightarrow P(C)$, then a new rule can be created: $P(A) \rightarrow P(C)$.
 
@@ -630,6 +632,7 @@ For example, the test setup for an ES integration test can be seen in \autoref{t
 Some visual tests were carried out with the created KNN visualization tool. These can be found in \code{src/test/java/graphing/}. Visualizations of forward, backward and lambda search can be seen in \cref{fig:forward_search_test,fig:backward_search_test,fig:lambda_search_test}. These tests can be found in \code{KnnSimpleForwardThinkVisualizer.java}, \code{KnnSimpleBackwardThinkVisualizer.java} and \code{KnnSimpleLambdaThinkVisualizer.java}. Refer to \cref{fig:knn_graph_legend} for the meaning of the node colors. In these tests, a threshold of 1 was used for simplicity and the initial active tags are provided as search input. The data file used as input to create the KNN for these tests is located at \code{data/simpleData.txt}.
 
 \subsection{Quality Assurance}
+\label{sec:results_qa}
 
 To ensure a level of quality in the Prometheus code, a continuous integration build runs at every push to the GitHub repository\footnote{The GitHub repository can be found here:\\ \url{https://github.com/seanstappas/prometheus-ai/}\\} hosting the code. This is done with Travis CI\footnote{The Travis CI builds can be viewed here:\\ \url{https://travis-ci.org/seanstappas/prometheus-ai}}.
 
@@ -644,7 +647,7 @@ Many steps are run during these builds, including running all the unit tests and
 	\item Check for any common bugs (with \code{FindBugs}).
 \end{enumerate}
 
-The \code{jacoco} library enforces that a certain minimum ratio of the main Prometheus code is covered by tests. Coverage can be defined in terms of byte code instructions, lines, methods and classes. The minimum ratios for these types are \SI{85}{\percent}, \SI{85}{\percent}, \SI{90}{\percent} and \SI{95}{\percent}, respectively. These are specified in the \code{pom.xml} file in the root directory.
+The \code{jacoco} library enforces that a certain minimum ratio of the main Prometheus code is covered by tests. Coverage can be defined in terms of byte code instructions, lines, methods and classes. The minimum ratios for these types were chosen to be \SI{85}{\percent}, \SI{85}{\percent}, \SI{90}{\percent} and \SI{95}{\percent}, respectively. These are specified in the \code{pom.xml} file in the root directory.
 
 The \code{checkstyle} library enforces that the code conforms to a certain style. The style used for Prometheus is inspired from the Java Sun code style \cite{sun_style} and is specified in the \code{checkstyle.xml} in the root directory. Among other things, this checks that there are Javadoc comments for all important classes and methods.
 
